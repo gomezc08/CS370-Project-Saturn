@@ -3,6 +3,8 @@ Created for CS-370 Lab Week 3
 This is the most basic example of how to play a file using the simpleaudio package
 """
 
+# TODO: Delete this now that you're done with it :-)
+
 import simpleaudio as sa
 
 # This is a test sound file

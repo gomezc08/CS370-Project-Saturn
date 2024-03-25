@@ -5,7 +5,9 @@ import simpleaudio as sa
 from pydub import AudioSegment
 import pydub.playback as playback
 
-
+# NOTE: This class does much more than its name implies!
+# TODO: Rename this class?
+# TODO: Separate command line parsing from command execution?
 class CommandLineParser:
     """
     A class that parses command line arguments and executes corresponding commands.
@@ -18,6 +20,7 @@ class CommandLineParser:
         argvlen (int): The length of the command line arguments.
         isPlaying (bool): A flag indicating whether audio is currently being played.
         audioFormats (list): A list of audio formats.
+    # TODO: Instead of listing the methods here, each method should have its own docstring.
     Methods:
         print_help: Print the help message.
         count_arguments: Count the number of arguments passed.
@@ -41,7 +44,7 @@ class CommandLineParser:
         self.argvlen = len(argv)
         self.isPlaying = False
         # small list of audio formats
-        self.audioFormats = [
+        self.audioFormats = [   # TODO: Where did you get this list from? Should it go in a separate config file?
             ".wav",
             ".mp3",
             ".ogg",
@@ -82,6 +85,9 @@ class CommandLineParser:
 
     def print_help(self):
         # this is hacky, but it is the only way to get the help message to print nicely without too much work
+        # NOTE: Yes, it's ugly, and it's not the only way to make the output look nice.
+        # TODO: Use a format string and a list of tuples. 
+        #       It won't be too much work, you just have to look up the format string documentation.
         print(
             "Commands:            Description:                                 Usage:"
         )
@@ -139,6 +145,8 @@ class CommandLineParser:
 
     def count_arguments(self):
         # count the number of arguments passed
+        # TODO: The above should be a triple-quoted docstring
+        # TODO: Also this particular function probably should be deleted - it was for testing, right?
         print(
             "counted ",
             self.argvlen - 2,
@@ -171,6 +179,7 @@ class CommandLineParser:
         # play files overlapping using the play method
         # and threading to play multiple files at the same time
         threads = []
+        # NOTE: Nicely done! This is very clear and easy to understand.
         for file_path in queue:
             thread = threading.Thread(target=self.play, args=(file_path,))
             threads.append(thread)
@@ -305,6 +314,7 @@ class CommandLineParser:
             if file_path[0] == ".":
                 file_path = str(os.getcwd()) + file_path[1:]
             print("I am now playing", file_path)
+            # TODO: This reverses the filename not the data
             self.play(file_path.reverse())
         else:
             print(
@@ -317,6 +327,7 @@ class CommandLineParser:
         # concatenate multiple audio files (>2) into one file
         # take the file paths, the new name, the new file extension, and the crossfade amount
         # TODO fix this shit
+        # NOTE: Haha, I probably wasn't supposed to see that. What do you think about TODOs vs issues?
         if self.argvlen > 4:
             file_paths = self.argv[2:-3]
             crossfade = self.argv[-3]

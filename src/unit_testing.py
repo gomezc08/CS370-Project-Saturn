@@ -6,6 +6,7 @@ import saturn_cli_example as saturn
 
 argvlen = len(sys.argv)
 
+# NOTE: It looks like there's nothing happening here yet
 
 class TestSounds(unittest.TestCase):
     def test_play_audio(self, file):

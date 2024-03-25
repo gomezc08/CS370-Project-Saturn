@@ -8,6 +8,7 @@
   - ex. `sudo pacman -S ffmpeg`
   - ex. `sudo dnf install ffmpeg`
 
+**TODO:** Give basic instructions for running your program. Note it needs Python version 3.10 or higher.
 
 # Project Saturn                                                                                 
 **TODO:**       
