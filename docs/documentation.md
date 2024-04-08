@@ -20,6 +20,8 @@ python src/saturn_cli.py [options] [arguments]
 - `-t`, `--transcode`: Change audio format.
 - `-b`, `--play-backwards`: Play a file backward.
 - `-a`, `--concatenate`: Concatenate audio files.
+- `-z`, `--change-speed`: speedup audio file
+- `-w`, `--change-pitch`: Change pitch of audio file
 
 ## Commands
 
@@ -88,6 +90,22 @@ python src/saturn_cli.py --concatenate file_path1 file_path2 ... new_name extens
 
 - Concatenate audio files into one file. Provide file paths, the new name, and the file extension.
 
+### `speedup` Command
+
+```bash
+python src/saturn_cli.py --change-speed file_path number
+```
+
+- Play a file sped up. Provide file name, as well as a number above 1.
+
+### `change-pitch` Command
+
+```bash
+python src/saturn_cli.py --change-pitch file_path number
+```
+
+- Play a file with a different pitch. Provide file name, as well as how many semitones you want to raise the pitch. 
+
 ## Examples
 
 1. Display the help message:
@@ -148,6 +166,18 @@ python src/saturn_cli.py --play-backwards audio_file.wav
 
 ```bash
 python src/saturn_cli.py --concatenate file1.wav file2.wav new_file.wav wav
+```
+
+11. Play a file sped up:
+
+```bash
+python src/saturn_cli.py --change-speed file1.wav 2.0
+```
+
+12. Play a file with altered pitch:
+
+```bash
+python src/saturn_cli.py --change-pitch file1.wav 6.0
 ```
 
 ## Note
