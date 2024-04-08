@@ -6,6 +6,8 @@ from pydub import AudioSegment
 from pydub.effects import speedup
 import pydub.playback as playback
 import pydub.effects as effects
+import librosa
+import soundfile as sf
 
 
 class CommandLineParser:
@@ -389,33 +391,24 @@ class CommandLineParser:
                 sys.exit(1)
 
     def change_pitch_command(self):
-        # Not working yet
-        # Change the pitch of an audio file and play it
+        # Change the pitch of an audio file
         if self.argvlen > 3:
             file_path = self.argv[2]
             semitones = float(self.argv[3])  # The number of semitones to shift the pitch
-
             if file_path[0] == ".":
                 file_path = str(os.getcwd()) + file_path[1:]
-
             print("Playing", file_path, "with pitch changed by", semitones, "semitones.")
-
-            sound = AudioSegment.from_file(file_path, format=file_path.split('.')[-1])
-        
-            # Calculate the new sample rate required to shift the pitch by the specified semitones
-            new_sample_rate = int(sound.frame_rate * (2 ** (semitones / 12.0)))
-
-            # Use set_frame_rate to change the sample rate without altering the number of samples
-            # This effectively changes the pitch without changing the playback speed
-            sound_with_changed_pitch = sound._spawn(sound.raw_data, overrides={'frame_rate': new_sample_rate})
-
-            # Since changing the frame rate doesn't change the audio duration,
-            # set the frame width back to original to ensure pydub plays it at the new rate correctly
-            sound_with_changed_pitch = sound_with_changed_pitch.set_frame_rate(sound.frame_rate)
-
+            # Load the audio file with librosa and shift the pitch
+            y, sr = librosa.load(file_path, sr=None)
+            y_shifted = librosa.effects.pitch_shift(y, sr=sr, n_steps=semitones)
+            # Save the pitch-shifted audio to a temporary file
+            temp_file_path = "temp_pitch_shifted.wav"
+            # Use soundfile to write the pitch-shifted audio to a temporary file
+            sf.write(temp_file_path, y_shifted, sr)
+            # Load the pitch-shifted audio with pydub
+            sound_with_changed_pitch = AudioSegment.from_file(temp_file_path)
             # Play the modified audio directly
             playback.play(sound_with_changed_pitch)
-
         else:
             print("Error: Please provide a file path and the number of semitones to shift the pitch.", file=sys.stderr)
             sys.exit(1)
