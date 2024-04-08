@@ -365,6 +365,7 @@ class CommandLineParser:
     def change_speed_command(self):
             # change the speed of an audio file
             # Note: seems to warp the quality of the audio (maybe need to separate tempo and pitch?)
+            # Need to add an error if value is below 1
             if self.argvlen > 3:
                 file_path = self.argv[2]
                 speed = float(self.argv[3])
