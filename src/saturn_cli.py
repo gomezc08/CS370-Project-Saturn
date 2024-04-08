@@ -3,7 +3,9 @@ import os
 import threading
 import simpleaudio as sa
 from pydub import AudioSegment
+from pydub.effects import speedup
 import pydub.playback as playback
+import pydub.effects as effects
 
 
 class CommandLineParser:
@@ -41,7 +43,7 @@ class CommandLineParser:
         self.argvlen = len(argv)
         self.isPlaying = False
         # small list of audio formats
-        # necessary for the list_command
+        # necessary for the list command
         self.audioFormats = [
             ".wav",
             ".mp3",
@@ -122,7 +124,7 @@ class CommandLineParser:
             )
         )
         print(
-            "-t,--transcode       Change audio format.                         python {} --transcode original_name new_name file_extension".format(
+            "-t,--transcode       Change audio format.                         python {} --transcode original_file.wav new_file.mp3".format(
                 self.argv[0]
             )
         )
@@ -149,7 +151,7 @@ class CommandLineParser:
 
     def play(self, file_path):
         # play a file using the simpleaudio library
-        if file_path[-4:] == ".wav":
+        if file_path.endswith(".wav"):
             self.isPlaying = True
             wave_obj = sa.WaveObject.from_wave_file(file_path)
             play_obj = wave_obj.play()
@@ -272,31 +274,33 @@ class CommandLineParser:
             sys.exit(1)
 
     def transcode_command(self):
-        # change audio format
-        # usage python saturn_cli.py -t original_name new_name file_extension
-        if self.argvlen > 4:
-            original_name = (
-                self.argv[2].split(".")[0]
-                if self.argv[2][0] != "."
-                else "." + self.argv[2][1:].split(".")[0]
+        # Change audio format
+        # Usage: python saturn_cli.py -t original_file new_file
+        if self.argvlen == 4:
+            original_file = self.argv[2]
+            new_file = self.argv[3]
+
+            # Determine file extensions
+            original_extension = (
+                original_file.split(".")[-1]
+                if original_file[0] != "."
+                else original_file[1:].split(".")[-1]
             )
-            new_name = (
-                self.argv[3].split(".")[0]
-                if self.argv[3][0] != "."
-                else "." + self.argv[3][1:].split(".")[0]
+            new_extension = (
+                new_file.split(".")[-1]
+                if new_file[0] != "."
+                else new_file[1:].split(".")[-1]
             )
-            extension = (
-                self.argv[4].split(".")[-1]
-                if self.argv[4][0] != "."
-                else self.argv[4][1:].split(".")[-1]
-            )
-            sound = AudioSegment.from_file(original_name, format=extension)
-            sound.export(new_name + "." + extension, format=extension)
-        else:
+
+            # Load the audio and export it to the new format
+            sound = AudioSegment.from_file(original_file, format=original_extension)
+            sound.export(new_file, format=new_extension)
             print(
-                "Error: Please provide three arguments after the --transcode or -t option.",
-                file=sys.stderr,
+                f"File transcoded successfully from {original_extension} to {new_extension}"
             )
+
+        else:
+            print("Error: Please provide two arguments after the -t option.")
             sys.exit(1)
 
     def play_backwards_command(self):
@@ -306,7 +310,20 @@ class CommandLineParser:
             if file_path[0] == ".":
                 file_path = str(os.getcwd()) + file_path[1:]
             print("I am now playing", file_path)
-            self.play(file_path.reverse())
+            self.isPlaying = True
+            # can't use the play function because it only takes the file path.
+            # this will have to be ammended in the future
+            # TODO ^
+            sound = AudioSegment.from_file(
+                file_path,
+                format=(
+                    file_path.split(".")[-1]
+                    if file_path[0] != "."
+                    else file_path[1:].split(".")[-1]
+                ),
+            )
+            playback.play(sound.reverse())
+            self.isPlaying = False
         else:
             print(
                 "Error: Please provide a file path after the --play or -p option.",
@@ -334,7 +351,8 @@ class CommandLineParser:
             sound = AudioSegment.from_file(file_paths[0], format=extension)
             for file_path in file_paths[1:]:
                 sound = sound.append(
-                    AudioSegment.from_file(file_path, format=extension), crossfade=crossfade
+                    AudioSegment.from_file(file_path, format=extension),
+                    crossfade=crossfade,
                 )
             sound.export(new_name + "." + extension, format=extension)
         else:
@@ -342,6 +360,64 @@ class CommandLineParser:
                 "Error: Please provide at least three arguments after the --concatenate or -a option.",
                 file=sys.stderr,
             )
+            sys.exit(1)
+
+    def change_speed_command(self):
+            # change the speed of an audio file
+            # Note: seems to warp the quality of the audio (maybe need to separate tempo and pitch?)
+            # Need to add an error if value is below 1
+            if self.argvlen > 3:
+                file_path = self.argv[2]
+                speed = float(self.argv[3])
+                if file_path[0] == ".":
+                    file_path = str(os.getcwd()) + file_path[1:]
+                print("I am now playing", file_path)
+                sound = AudioSegment.from_file(file_path,
+                    format=(
+                        file_path.split(".")[-1]
+                        if file_path[0] != "."
+                        else file_path[1:].split(".")[-1]
+                    ),
+                )
+                sound = speedup(sound, speed)
+                playback.play(sound)
+            else:
+                print(
+                    "Error: Please provide a file path and a speed after the --change-speed or -z option.",
+                    file=sys.stderr,
+                )
+                sys.exit(1)
+
+    def change_pitch_command(self):
+        # Not working yet
+        # Change the pitch of an audio file and play it
+        if self.argvlen > 3:
+            file_path = self.argv[2]
+            semitones = float(self.argv[3])  # The number of semitones to shift the pitch
+
+            if file_path[0] == ".":
+                file_path = str(os.getcwd()) + file_path[1:]
+
+            print("Playing", file_path, "with pitch changed by", semitones, "semitones.")
+
+            sound = AudioSegment.from_file(file_path, format=file_path.split('.')[-1])
+        
+            # Calculate the new sample rate required to shift the pitch by the specified semitones
+            new_sample_rate = int(sound.frame_rate * (2 ** (semitones / 12.0)))
+
+            # Use set_frame_rate to change the sample rate without altering the number of samples
+            # This effectively changes the pitch without changing the playback speed
+            sound_with_changed_pitch = sound._spawn(sound.raw_data, overrides={'frame_rate': new_sample_rate})
+
+            # Since changing the frame rate doesn't change the audio duration,
+            # set the frame width back to original to ensure pydub plays it at the new rate correctly
+            sound_with_changed_pitch = sound_with_changed_pitch.set_frame_rate(sound.frame_rate)
+
+            # Play the modified audio directly
+            playback.play(sound_with_changed_pitch)
+
+        else:
+            print("Error: Please provide a file path and the number of semitones to shift the pitch.", file=sys.stderr)
             sys.exit(1)
 
     def parse_arguments(self):
@@ -369,6 +445,10 @@ class CommandLineParser:
                 self.play_backwards_command()
             case "-a" | "--concatenate":
                 self.concatenate_command()
+            case "-z" | "--change-speed":
+                self.change_speed_command()
+            case "-w" | "--change-pitch":
+                self.change_pitch_command()
             case _:
                 errors = self.argv[1:]
                 print(
