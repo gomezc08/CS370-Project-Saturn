@@ -409,6 +409,8 @@ class CommandLineParser:
             sound_with_changed_pitch = AudioSegment.from_file(temp_file_path)
             # Play the modified audio directly
             playback.play(sound_with_changed_pitch)
+            # Remove the temporary file
+            os.remove(temp_file_path)
         else:
             print("Error: Please provide a file path and the number of semitones to shift the pitch.", file=sys.stderr)
             sys.exit(1)
