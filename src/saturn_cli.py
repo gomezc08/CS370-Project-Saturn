@@ -8,41 +8,40 @@ import pydub.playback as playback
 import pydub.effects as effects
 import librosa
 import soundfile as sf
+import pandas as pd
 
 
-class CommandLineParser:
+class Saturn:
     """
-    A class that parses command line arguments and executes corresponding commands.
-
-    Args:
-        argv (list): The list of command line arguments.
+    The Saturn class represents a command-line interface for audio file manipulation.
 
     Attributes:
-        argv (list): The list of command line arguments.
-        argvlen (int): The length of the command line arguments.
-        isPlaying (bool): A flag indicating whether audio is currently being played.
-        audioFormats (list): A list of audio formats.
+        argv (list): The list of command-line arguments.
+        argvlen (int): The length of the argv list.
+        isPlaying (bool): Indicates whether an audio file is currently being played.
+        audioFormats (list): A list of supported audio file formats.
+
     Methods:
-        print_help: Print the help message.
-        count_arguments: Count the number of arguments passed.
-        play: Play a file using the simpleaudio library.
-        play_overlap: Play files overlapping using the play method and threading.
-        play_sequential: Play files sequentially using the play method.
-        play_command: Play a file using the play method.
-        overlap_command: Play files overlapping using the play_overlap method.
-        sequential_command: Play files sequentiall using the play method.
-        list_command: Print all files in the current directory recursively with audio file extensions.
-        rename_command: Rename an audio file.
-        transcode_command: Change audio format.
-        play_backwards_command: Play a file backward.
-        concatenate_command: Concatenate audio files.
-        parse_arguments: Parse the command line arguments and execute the corresponding command.
+        getInstance(): Returns an instance of the Saturn class.
+        print_help(): Prints the help message with available commands and their usage.
+        count_arguments(): Counts the number of arguments passed.
+        play(file_path): Plays an audio file.
+        play_overlap(queue): Plays multiple audio files overlapping each other.
+        play_sequential(queue): Plays multiple audio files sequentially.
+        play_command(): Executes the play command.
+        overlap_command(): Executes the overlap command.
+        sequential_command(): Executes the sequential command.
+        list_command(): Lists all audio files in the current directory.
+        rename_command(): Renames an audio file.
+        transcode_command(): Changes the audio format of a file.
+        play_backwards_command(): Plays an audio file backwards.
     """
 
-    def __init__(self, argv):
-        # initialize the command line parser
+    def __init__(self, argv, argvlen):
+
         self.argv = argv
-        self.argvlen = len(argv)
+        self.argvlen = argvlen
+
         self.isPlaying = False
         # small list of audio formats
         # necessary for the list command
@@ -85,65 +84,81 @@ class CommandLineParser:
             ".8svx",
         ]
 
+    def getInstance(argv, argvlen):
+        """
+        if an instance of Saturn already exists, return it
+        otherwise, create a new instance
+        """
+        if not hasattr(Saturn, "_instance"):
+            Saturn._instance = Saturn(argv=argv, argvlen=argvlen)
+        return Saturn._instance
+
     def print_help(self):
-        # this is hacky, but it is the only way to get the help message to print nicely without too much work
-        print(
-            "Commands:            Description:                                 Usage:"
-        )
-        print(
-            "\n-h,--help            Print this help message.                     python {} --help".format(
-                self.argv[0]
-            )
-        )
-        print(
-            "-c,--count           Count the number of arguments.               python {} --count".format(
-                self.argv[0]
-            )
-        )
-        print(
-            "-p,--play            Play a file.                                 python {} --play file_path".format(
-                self.argv[0]
-            )
-        )
-        print(
-            "-s,--sequential      Play files sequentially.                     python {} --sequential file_path1 file_path2 ...".format(
-                self.argv[0]
-            )
-        )
-        print(
-            "-o,--overlap         Play files overlapping each other.           python {} --overlap file_path1 file_path2 ...".format(
-                self.argv[0]
-            )
-        )
-        print(
-            "-l,--list            List audio files in the current directory.   python {} --list".format(
-                self.argv[0]
-            )
-        )
-        print(
-            "-r,--rename          Rename an audio file.                        python {} --rename original_name new_name".format(
-                self.argv[0]
-            )
-        )
-        print(
-            "-t,--transcode       Change audio format.                         python {} --transcode original_file.wav new_file.mp3".format(
-                self.argv[0]
-            )
-        )
-        print(
-            "-b,--play-backwards  Play a file backward.                        python {} --play-backwards file_path".format(
-                self.argv[0]
-            )
-        )
-        print(
-            "-a,--concatenate     Concatenate audio files.                     python {} --concatenate file_path1 file_path2 ... new_name extension".format(
-                self.argv[0]
-            )
-        )
+        """print the help message with available commands and their usage"""
+
+        # this is kinda an insane way to do this but its so much cleaner than a bunch of print statements
+        df = pd.DataFrame(columns=["Command", "Description", "Usage"])
+        commands = [
+            {
+                "Command": "-h,--help",
+                "Description": "Print this help message.",
+                "Usage": f"python {self.argv[0]} --help",
+            },
+            {
+                "Command": "-c,--count",
+                "Description": "Count the number of arguments.",
+                "Usage": f"python {self.argv[0]} --count",
+            },
+            {
+                "Command": "-p,--play",
+                "Description": "Play a file.",
+                "Usage": f"python {self.argv[0]} --play file_path",
+            },
+            {
+                "Command": "-s,--sequential",
+                "Description": "Play files sequentially.",
+                "Usage": f"python {self.argv[0]} --sequential file_path1 file_path2 ...",
+            },
+            {
+                "Command": "-o,--overlap",
+                "Description": "Play files overlapping each other.",
+                "Usage": f"python {self.argv[0]} --overlap file_path1 file_path2 ...",
+            },
+            {
+                "Command": "-l,--list",
+                "Description": "List audio files in the current directory.",
+                "Usage": f"python {self.argv[0]} --list",
+            },
+            {
+                "Command": "-r,--rename",
+                "Description": "Rename an audio file.",
+                "Usage": f"python {self.argv[0]} --rename original_name new_name",
+            },
+            {
+                "Command": "-t,--transcode",
+                "Description": "Change audio format.",
+                "Usage": f"python {self.argv[0]} --transcode original_file.wav new_file.mp3",
+            },
+            {
+                "Command": "-b,--play-backwards",
+                "Description": "Play a file backward.",
+                "Usage": f"python {self.argv[0]} --play-backwards file_path",
+            },
+            {
+                "Command": "-a,--concatenate",
+                "Description": "Concatenate audio files.",
+                "Usage": f"python {self.argv[0]} --concatenate file1 file2 file3 ... name.extension crossfade",
+            },
+        ]
+
+        for command in commands:
+            df = df._append(command, ignore_index=True)
+
+        print(df.to_string(index=False))
         sys.exit(0)
 
     def count_arguments(self):
-        # count the number of arguments passed
+        """count the number of arguments passed"""
         print(
             "counted ",
             self.argvlen - 2,
@@ -151,31 +166,28 @@ class CommandLineParser:
         )
         sys.exit(0)
 
+    def getSound(self, file_path):
+        return AudioSegment.from_file(
+            file_path,
+            format=(
+                file_path.split(".")[-1]
+                if file_path[0] != "."
+                else file_path[1:].split(".")[-1]
+            ),
+        )
+
     def play(self, file_path):
-        # play a file using the simpleaudio library
-        if file_path.endswith(".wav"):
-            self.isPlaying = True
-            wave_obj = sa.WaveObject.from_wave_file(file_path)
-            play_obj = wave_obj.play()
-            play_obj.wait_done()
-            self.isPlaying = False
-        else:
-            self.isPlaying = True
-            sound = AudioSegment.from_file(
-                file_path,
-                format=(
-                    file_path.split(".")[-1]
-                    if file_path[0] != "."
-                    else file_path[1:].split(".")[-1]
-                ),
-            )
-            playback.play(sound)
-            self.isPlaying = False
+        """ play an audio file """
+        self.isPlaying = True
+        sound = self.getSound(file_path)
+        playback.play(sound)
+        self.isPlaying = False
 
     def play_overlap(self, queue):
-        # play files overlapping using the play method
-        # and threading to play multiple files at the same time
+        """ play files overlapping using the play method
+        and threading to play multiple files at the same time """
         threads = []
+        print(f"I am now playing the following overlapping each other: {queue}")
         for file_path in queue:
             thread = threading.Thread(target=self.play, args=(file_path,))
             threads.append(thread)
@@ -185,7 +197,7 @@ class CommandLineParser:
             thread.join()
 
     def play_sequential(self, queue):
-        # play files sequentially using the play method
+        """ play files sequentially using the play method """
         while not self.isPlaying and queue:
             for file_path in queue:
                 print("Playing:", file_path)
@@ -193,7 +205,7 @@ class CommandLineParser:
                 queue = queue[1:]
 
     def play_command(self):
-        # play a file using the play method
+        """ play a file using the play method """
         if self.argvlen > 2:
             file_path = self.argv[2]
             if file_path[0] == ".":
@@ -208,12 +220,11 @@ class CommandLineParser:
             sys.exit(1)
 
     def overlap_command(self):
-        # play files overlapping using the play_overlap method
+        """ play files overlapping using the play_overlap method """
         file_paths = []
         if self.argvlen > 2:
             for i in self.argv[2:]:
                 file_paths.append(i)
-                print("I am now playing files overlapping each other:", i)
             self.play_overlap(file_paths)
         else:
             print(
@@ -223,7 +234,7 @@ class CommandLineParser:
             sys.exit(1)
 
     def sequential_command(self):
-        # play files sequentially using the play method
+        """ play files sequentially using the play method """
         file_paths = []
         if self.argvlen > 2:
             for i in self.argv[2:]:
@@ -238,15 +249,16 @@ class CommandLineParser:
             sys.exit(1)
 
     def list_command(self):
-        # print all files in the current directory recursively with audio file extensions
+        """ print all files in the current directory recursively with audio file extensions """
         # this WILL not work if the cwd is /src/
+        # dirs is necessary for the os.walk function, don't remove it
         for root, dirs, files in os.walk(os.getcwd()):
             for file in files:
                 if file.endswith(tuple(self.audioFormats)):
                     print(os.path.join(root, file))
 
     def rename_command(self):
-        # rename an audio file, take the original name and the new one, doesn't change file extension
+        """ rename an audio file, take the original name and the new one, doesn't change file extension """
         if self.argvlen > 3:
             original_name = self.argv[2]
             extension = (
@@ -276,7 +288,7 @@ class CommandLineParser:
             sys.exit(1)
 
     def transcode_command(self):
-        # Change audio format
+        """ Transcode an audio file to a different format."""
         # Usage: python saturn_cli.py -t original_file new_file
         if self.argvlen == 4:
             original_file = self.argv[2]
@@ -306,7 +318,7 @@ class CommandLineParser:
             sys.exit(1)
 
     def play_backwards_command(self):
-        # play a file using the play method
+        """ play a file using the play method """
         if self.argvlen > 2:
             file_path = self.argv[2]
             if file_path[0] == ".":
@@ -334,61 +346,58 @@ class CommandLineParser:
             sys.exit(1)
 
     def concatenate_command(self):
-        # concatenate multiple audio files (>2) into one file
-        # take the file paths, the new name, the new file extension, and the crossfade amount
-        # TODO fix this shit
+        """ concatenate audio files with crossfade amount (if not supplied, then 0) """
+        # python saturn_cli.py -a file1 file2 file3 ... new_name.extension crossfade
         if self.argvlen > 4:
             file_paths = self.argv[2:-3]
-            crossfade = self.argv[-3]
+            new_name = self.argv[-2]
+            extension = new_name.split(".")[-1]
+            crossfade = self.argv[-1] if self.argv[-1].isdigit() else 0
+            if "." not in new_name[1:]:
+                print("Error: Please provide the file extension.", file=sys.stderr)
+                sys.exit(1)
             new_name = (
-                self.argv[-2].split(".")[0]
-                if self.argv[-2][0] != "."
-                else "." + self.argv[-2][1:].split(".")[0]
+                new_name.split(".")[0]
+                if new_name[0] != "."
+                else "." + new_name[1:].split(".")[0] + "." + extension
             )
-            extension = (
-                self.argv[-1].split(".")[-1]
-                if self.argv[-1][0] != "."
-                else self.argv[-1][1:].split(".")[-1]
-            )
-            sound = AudioSegment.from_file(file_paths[0], format=extension)
-            for file_path in file_paths[1:]:
-                sound = sound.append(
-                    AudioSegment.from_file(file_path, format=extension),
-                    crossfade=crossfade,
-                )
-            sound.export(new_name + "." + extension, format=extension)
+            sounds = [AudioSegment.from_file(f) for f in file_paths]
+            combined = sounds[0]
+            for sound in sounds[1:]:
+                combined = combined.append(sound, crossfade=0)
+            combined.export(new_name, format=extension)
         else:
             print(
-                "Error: Please provide at least three arguments after the --concatenate or -a option.",
+                "Error: Please provide at least two file paths and a new name with extension after the --concatenate or -a option.",
                 file=sys.stderr,
             )
             sys.exit(1)
 
     def change_speed_command(self):
-            # change the speed of an audio file
-            # Note: seems to warp the quality of the audio (maybe need to separate tempo and pitch?)
-            # Need to add an error if value is below 1
-            if self.argvlen > 3:
-                file_path = self.argv[2]
-                speed = float(self.argv[3])
-                if file_path[0] == ".":
-                    file_path = str(os.getcwd()) + file_path[1:]
-                print("I am now playing", file_path)
-                sound = AudioSegment.from_file(file_path,
-                    format=(
-                        file_path.split(".")[-1]
-                        if file_path[0] != "."
-                        else file_path[1:].split(".")[-1]
-                    ),
-                )
-                sound = speedup(sound, speed)
-                playback.play(sound)
-            else:
-                print(
-                    "Error: Please provide a file path and a speed after the --change-speed or -z option.",
-                    file=sys.stderr,
-                )
-                sys.exit(1)
+        # change the speed of an audio file
+        # Note: seems to warp the quality of the audio (maybe need to separate tempo and pitch?)
+        # Need to add an error if value is below 1
+        if self.argvlen > 3:
+            file_path = self.argv[2]
+            speed = float(self.argv[3])
+            if file_path[0] == ".":
+                file_path = str(os.getcwd()) + file_path[1:]
+            print("I am now playing", file_path)
+            sound = AudioSegment.from_file(file_path,
+                format=(
+                    file_path.split(".")[-1]
+                    if file_path[0] != "."
+                    else file_path[1:].split(".")[-1]
+                ),
+            )
+            sound = speedup(sound, speed)
+            playback.play(sound)
+        else:
+            print(
+                "Error: Please provide a file path and a speed after the --change-speed or -z option.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
 
     def change_pitch_command(self):
         # Change the pitch of an audio file
@@ -415,31 +424,52 @@ class CommandLineParser:
             print("Error: Please provide a file path and the number of semitones to shift the pitch.", file=sys.stderr)
             sys.exit(1)
 
+
+class CommandLineParser:
+    """
+    A class that parses command line arguments and executes corresponding commands.
+
+    Attributes:
+        argv (list): The list of command line arguments.
+
+    Methods:
+        __init__(self, argv): Initializes the CommandLineParser object.
+        parse_arguments(self): Parses the command line arguments and executes the corresponding command.
+    """
+
+    def __init__(self, argv):
+        self.argv = argv
+        # call saturn's getInstance method to get an instance of the Saturn class
+        self.saturn = Saturn.getInstance(argv, len(argv))
+        self.parse_arguments()
+
     def parse_arguments(self):
-        # parse the command line arguments and execute the corresponding command
+        """
+        Parses the command line arguments and executes the corresponding command.
+        """
         command = self.argv[1] if len(self.argv) > 1 else None
 
         match command:
             case None | "--help" | "-h":
-                self.print_help()
+                self.saturn.print_help()
             case "-c" | "--count":
-                self.count_arguments()
+                self.saturn.count_arguments()
             case "-p" | "--play":
-                self.play_command()
+                self.saturn.play_command()
             case "-s" | "--sequential":
-                self.sequential_command()
+                self.saturn.sequential_command()
             case "-o" | "--overlap":
-                self.overlap_command()
+                self.saturn.overlap_command()
             case "-l" | "--list":
-                self.list_command()
+                self.saturn.list_command()
             case "-r" | "--rename":
-                self.rename_command()
+                self.saturn.rename_command()
             case "-t" | "--transcode":
-                self.transcode_command()
+                self.saturn.transcode_command()
             case "-b" | "--play-backwards":
-                self.play_backwards_command()
+                self.saturn.play_backwards_command()
             case "-a" | "--concatenate":
-                self.concatenate_command()
+                self.saturn.concatenate_command()
             case "-z" | "--change-speed":
                 self.change_speed_command()
             case "-w" | "--change-pitch":
@@ -459,4 +489,3 @@ class CommandLineParser:
 if __name__ == "__main__":
     # create a command line parser and parse the command line arguments
     parser = CommandLineParser(sys.argv)
-    parser.parse_arguments()
