@@ -1,8 +1,15 @@
 import tkinter as tk
+import sys, os
 
+parent_dir = os.path.dirname(os.getcwd())
+sys.path.insert(0, parent_dir + "/Database")
 
-class AudioEditorApp:
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from Database.PlaylistManager import PlaylistManager
+
+class AudioEditorApp(PlaylistManager):
     def __init__(self):
+        super().__init__()
         self.root = tk.Tk()
         self.root.title("Sound Archive App")
         self.root.geometry("800x600")
@@ -89,6 +96,7 @@ class AudioEditorApp:
         self.clear_frames()
         # TODO: Placeholder action for now
         print("Displaying songs in the playlist...")
+        self.view_sort_playlist("Your Library")
 
     def clear_frames(self):
         # Destroy widgets in all frames

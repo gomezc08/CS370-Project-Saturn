@@ -25,11 +25,10 @@ class PlaylistManager:
         remove_sound_from_playlist: Removes a sound from a defined playlist.
     """
 
-    def __init__(self, playlist_list):
+    def __init__(self):
         # composition relationship.
         self.connector = DBConnector("../sounds")
         self.sort_type = {"Title", "Length", "DateCreated"}
-        self.playlist_list = playlist_list
 
     def view_sort_playlist(self, playlist_title, sort_name=None):
         # Verify playlist is valid.
@@ -164,7 +163,7 @@ class PlaylistManager:
 
 
 if __name__ == "__main__":
-    manager = PlaylistManager(["Your Library"])
+    manager = PlaylistManager()
     manager.connector.init_playlist()
 
     # viewing sounds initially.
