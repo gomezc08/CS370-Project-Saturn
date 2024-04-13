@@ -18,6 +18,7 @@ class PlaylistManager:
 
     Methods:
         view_sort_playlist: Sorts and displays the playlist by sound title, length, or date added to playlist.
+        view_playlists: Displays each playlist title.
         create_playlist: Creates a new playlist name. The new playlist name is added to playlist_list.
         delete_playlist: Deletes a playlist.
         play_sound_in_playlist: Plays a sound from one of the playlists. Plays using the play method in our CommandLineParser class
@@ -35,7 +36,8 @@ class PlaylistManager:
         # if playlist_title not in self.playlist_list:
         #   raise Exception(f"Invalid playlist: {playlist_title}")
 
-        # OPEN CONNECTION.
+        playlist_list = []
+        # OPEN CONNECTION
         self.connector.open_connection()
 
         try:
@@ -57,15 +59,37 @@ class PlaylistManager:
 
             results = self.connector.cursor.fetchall()
             for result in results:
+                playlist_list.append(result)
                 print(result)
             # self.connector.cnx.commit()  # Uncomment if needed.
-
         except Exception as e:
             print(f"Error showing playlist: {e}")
 
         finally:
             # CLOSE CONNECTION.
             self.connector.close_connection()
+        
+        return playlist_list
+
+    def view_playlists(self):
+        playlists = []
+        self.connector.open_connection()
+        try:
+            query = "SELECT * FROM playlistnames"
+            self.connector.cursor.execute(query)
+            #self.connector.cnx.commit()
+            results = self.connector.cursor.fetchall()
+            for result in results:
+                playlists.append(result)
+            
+        except Exception:
+            print(f"Error loading playlists")
+
+        finally:
+            self.connector.close_connection()
+        
+        return playlists
+        
 
     def create_playlist(self, playlist_name):
         # if playlist_name not in self.playlist_list:
@@ -164,6 +188,8 @@ class PlaylistManager:
 
 if __name__ == "__main__":
     manager = PlaylistManager()
+    manager.view_playlists()
+    """
     manager.connector.init_playlist()
 
     # viewing sounds initially.
@@ -194,4 +220,5 @@ if __name__ == "__main__":
     manager.delete_playlist("Liked")
 
     # playing a sound.
-    manager.play_sound_in_playlist("toaster", "Your Library")
+    manager.play_sound_in_playlist("toaster", "Your Library")    
+    """
