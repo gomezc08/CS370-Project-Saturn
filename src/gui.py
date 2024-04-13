@@ -117,7 +117,7 @@ class Gui():
         if(playlist_title != "Your Library"):
             # creating the label.
             add_l = Entry(self.sound, width=50)
-            add_l.pack(anchor=E, padx=50, pady=5)
+            add_l.pack(padx=50, pady=20)
             
             # creating the button.
             add_b = Button(self.sound, text="Add to this Playlist", padx=50, pady = 5, bg = "Green", fg = "White", command=lambda: self.db.add_sound_into_playlist(add_l.get(), playlist_title))
