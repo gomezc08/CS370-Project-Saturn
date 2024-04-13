@@ -92,6 +92,10 @@ class Gui():
         var = StringVar()
         
         def update_label():
+            """
+            This function is bound to the Radiobuttons and sound_label and is called when one of the radio buttons is clicked.
+            This function then updates our sound label so the user can see/verify the sound they clicked. 
+            """
             sound_label.config(text=var.get())
 
         for sound in playlist:
@@ -105,28 +109,56 @@ class Gui():
         # play, edit, delete buttons.
         frame_buttons = Frame(self.sound, bg=self.bg_color)
         frame_buttons.pack()
-
-        play_btn = Button(frame_buttons, text="Play", command=self.third_screen, padx=50, pady = 5)
+        
+        play_btn = Button(frame_buttons, text="Play", command=lambda: self.saturn_instance.play(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/sounds/" + var.get() + ".mp3"), padx=50, pady = 5)
         play_btn.grid(row=0, column=0, padx=50, pady = 5)
 
-        play_edit = Button(frame_buttons, text="Edit", padx=50, pady = 5)
+        play_edit = Button(frame_buttons, text="Edit", padx=50, pady = 5, command=self.edit_screen)
         play_edit.grid(row=0, column=1, padx=50, pady = 5)
 
-        play_delete = Button(frame_buttons, text="Delete", padx=50, pady = 5)
+        def delete_button():
+            """
+            This function is bound to the "Delete" button and is called when the button is clicked.
+            It removes the sound selected in the playlist and updates the display accordingly.
+            """
+            self.db.remove_sound_from_playlist(var.get(), playlist_title)
+            self.sound.update()
+            
+        play_delete = Button(frame_buttons, text="Delete", padx=50, pady = 5, command=delete_button)
         play_delete.grid(row=0, column=2, padx=50, pady = 5)
 
     
     
-    def third_screen(self):
+    def edit_screen(self):
+        # initialize screen.
         self.sound.destroy()
-        self.third = Toplevel()
-        self.third.title("Third screen test")
-        self.btn = Button(self.third, text="Click me to close all windows", command=self.close_all)
-        self.btn.pack()
-
-    def close_all(self):
-        self.third.destroy()  # Close the third window
-        self.sound.destroy()    # Close the second window
+        self.edit = Toplevel()
+        self.edit.title("Edit Mode")        
+        self.edit.geometry("950x500")
+        self.edit.configure(bg=self.bg_color)
+        
+        # working in the 0th column: adding ALL edit features.
+        Label(self.edit, text="Speed", fg="Black", bg=self.bg_color, font=("Courier New", 10)).grid(row=0, column=0, padx=50, pady=15, sticky=W)
+        Label(self.edit, text="Pitch", fg="Black", bg=self.bg_color, font=("Courier New", 10)).grid(row=1, column=0, padx=50, pady=15, sticky=W)
+        Label(self.edit, text="Reverse", fg="Black", bg=self.bg_color, font=("Courier New", 10)).grid(row=2, column=0, padx=50, pady=15, sticky=W)
+        Label(self.edit, text="Overlap", fg="Black", bg=self.bg_color, font=("Courier New", 10)).grid(row=3, column=0, padx=50, pady=15, sticky=W)
+        Label(self.edit, text="Sequential", fg="Black", bg=self.bg_color, font=("Courier New", 10)).grid(row=4, column=0, padx=50, pady=15, sticky=W)
+        Label(self.edit, text="Random Insert", fg="Black", bg=self.bg_color, font=("Courier New", 10)).grid(row=5, column=0, padx=50, pady=15, sticky=W)
+        
+        # working in the 1st column: adding buttons for ALL edit features.
+        buttons_data = [
+            {"text": "Up", "row": 0, "column": 1, "columnspan": 2},
+            {"text": "Down", "row": 0, "column": 4, "columnspan": 2},
+            {"text": "Up", "row": 1, "column": 1, "columnspan": 2},
+            {"text": "Down", "row": 1, "column": 4, "columnspan": 2},
+            {"text": "Reverse", "row": 2, "column": 1, "columnspan": 5},
+            {"text": "Overlap", "row": 3, "column": 1, "columnspan": 5},
+            {"text": "Sequential", "row": 4, "column": 1, "columnspan": 5},
+            {"text": "Random Insert", "row": 5, "column": 1, "columnspan": 5}
+        ]
+        for button_data in buttons_data:
+            button = Button(self.edit, text=button_data["text"], fg="Black", bg=self.bg_color, padx=10, pady=5)
+            button.grid(row=button_data["row"], column=button_data["column"], columnspan=button_data["columnspan"], sticky=W)
 
 if __name__ == "__main__":
     gui = Gui()

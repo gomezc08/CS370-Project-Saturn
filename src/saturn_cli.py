@@ -497,3 +497,5 @@ class CommandLineParser:
 if __name__ == "__main__":
     # create a command line parser and parse the command line arguments
     parser = CommandLineParser(sys.argv)
+    print("teststststs")
+    parser.saturn.play("../sounds/coffee.wav")
