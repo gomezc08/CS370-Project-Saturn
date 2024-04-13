@@ -35,7 +35,10 @@ class Gui():
         self.playlist.title("Playlists")
         self.playlist.geometry("950x500")
         self.playlist.configure(bg=self.bg_color)
-
+        
+        # initialize title/label for radio buttons.
+        Label(self.playlist, text="Select Playlist", font=("Arial", 15), padx=50, pady=5, fg="Black", bg=self.bg_color).pack(anchor=W)
+        
         # Display playlists using radio buttons.
         playlists = self.db.view_playlists()
         self.radio_vars = {}
@@ -57,8 +60,16 @@ class Gui():
             self.sounds_screen(var.get())
 
         # "+" button
-        plus_button = Button(self.playlist, text="+", padx=50, pady = 5, fg="Black", bg=self.bg_color)
-        plus_button.pack(anchor=E, padx=50, pady = 5)  # Pack the button to the right side
+        Label(self.playlist, text="Create new Playlist", font=("Arial", 15), padx=50, pady=5, fg="Black", bg=self.bg_color).pack(anchor=E)
+        e = Entry(self.playlist, width=50)
+        e.pack(anchor=E, padx=50, pady=5)
+
+        def plus_click():
+            entry_value = e.get()
+            print(f"here is the tentry: {entry_value}")
+            
+        plus_button = Button(self.playlist, text="+", padx=50, pady=5, fg="Black", bg=self.bg_color, command=plus_click)
+        plus_button.pack(anchor=E, padx=50, pady=5)
 
         # "Continue" button
         b = Button(self.playlist, text="Continue", command=continue_with_selection, padx=50, pady = 5, fg="Black", bg=self.bg_color)
@@ -71,6 +82,9 @@ class Gui():
         self.sound.title("Playlists Screen")
         self.sound.geometry("950x500")
         self.sound.configure(bg=self.bg_color)
+        
+        # initialize title/label for sound buttons.
+        Label(self.sound, text="Select Sound", font=("Arial", 15), padx=50, pady=5, fg="Black", bg=self.bg_color).pack(anchor=W)
         
         # creating radio buttons for each song in the playlist.
         playlist = self.db.view_sort_playlist(playlist_title)
