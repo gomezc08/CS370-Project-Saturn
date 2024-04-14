@@ -22,7 +22,7 @@ class Gui():
         self.root_img_tk = ImageTk.PhotoImage(self.root_img)
         self.root_label = Label(self.root, image=self.root_img_tk)
         self.root_label.pack(pady=20)  
-        self.root_btn = Button(self.root, text="Continue", command=self.playlists_screen, padx=50, pady=5, fg="Black", bg=self.bg_color)
+        self.root_btn = Button(self.root, text="Continue", command=self.playlists_screen, padx=50, pady=5, fg="White", bg="Green")
         self.root_btn.pack(pady=20)
         
         self.saturn_instance = Saturn(sys.argv, len(sys.argv))
@@ -101,10 +101,13 @@ class Gui():
         self.sound.geometry("950x500")
         self.sound.configure(bg=self.bg_color)
         
-        # initialize title/label for sound buttons.
-        Label(self.sound, text="Select Sound", font=("Arial", 15), padx=50, pady=5, fg="Black", bg=self.bg_color).pack(anchor=W)
+        # [Playlist title].
+        Label(self.sound, text=playlist_title, font=("Arial", 20), padx=50, pady=5, fg="Black", bg=self.bg_color).grid(pady=10, row=0, column=0)
         
-        # creating radio buttons for each song in the playlist.
+        # initialize title/label for sound buttons.
+        Label(self.sound, text="Select Sound", font=("Arial", 15), padx=50, pady=5, fg="Black", bg=self.bg_color).grid(padx=20, pady=10, row=1, column=0, sticky=W)
+        
+        # setting-up for radio buttons.
         playlist = self.db.view_sort_playlist(playlist_title)
         self.radio_vars = {}
         var = StringVar(value="Small")
@@ -116,33 +119,45 @@ class Gui():
             """
             sound_label.config(text=var.get())
 
+        # playlist radio buttons.
+        # add sounds in rows of 7.
+        r = 2
+        c = 0
         for sound in playlist:
+            if r == 7:
+                r = 2
+                c += 1
             self.radio_vars[sound[0]] = var 
-            Radiobutton(self.sound, text=sound[0], variable=var, value=sound[0], command=update_label, fg="Black", bg=self.bg_color).pack(anchor=W, padx=50, pady=5)
-
-        # click on radio button label.
+            Radiobutton(self.sound, text=sound[0], variable=var, value=sound[0], command=update_label, fg="Black", bg=self.bg_color).grid(row=r, column=c, sticky=W, padx=10, pady=5)
+            r += 1
+        
+        if c > 1:
+            r = 5
+            
+        # radio button label.
         sound_label = Label(self.sound, text="", fg="Black", bg=self.bg_color)
-        sound_label.pack(anchor=W, padx=50, pady=5)
+        sound_label.grid(row=r, column=0, sticky=W, padx=50, pady=5)
+        r += 1
 
         # play, edit, delete buttons.
         frame_buttons = Frame(self.sound, bg=self.bg_color)
-        frame_buttons.pack()
+        frame_buttons.grid(row=r, column=0, pady=5)
         
-        play_btn = Button(frame_buttons, text="Play", command=lambda: self.saturn_instance.play(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/sounds/" + var.get() + ".mp3"), padx=50, pady = 5)
-        play_btn.grid(row=0, column=0, padx=50, pady = 5)
+        play_btn = Button(frame_buttons, text="Play", command=lambda: self.saturn_instance.play(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/sounds/" + var.get() + ".mp3"), padx=50, pady = 5, bg="Green", fg="white")
+        play_btn.grid(row=r, column=1, pady=5, padx=10)
 
-        play_edit = Button(frame_buttons, text="Edit", padx=50, pady = 5, command=self.edit_screen)
-        play_edit.grid(row=0, column=1, padx=50, pady = 5)
+        play_edit = Button(frame_buttons, text="Edit", padx=50, pady = 5, command=self.edit_screen, bg="Blue", fg="white")
+        play_edit.grid(row=r, column=2, pady=5, padx=10)
 
-        # add sound into playlist button IFF the playlist name is not My Library since this playlist by default has every sound.
+        # add sound button (only shows up in non your library playlists).
         if(playlist_title != "Your Library"):
             # creating the label.
             add_l = Entry(self.sound, width=50)
-            add_l.pack(padx=50, pady=20)
+            add_l.grid(row=r+1, column=0, padx=20, pady=10)
             
             # creating the button.
-            add_b = Button(self.sound, text="Add to this Playlist", padx=50, pady = 5, bg = "Green", fg = "White", command=lambda: self.db.add_sound_into_playlist(add_l.get(), playlist_title))
-            add_b.pack(padx=50, pady = 5)
+            add_b = Button(self.sound, text="Add to this Playlist", padx=50, pady = 5, bg = "Purple", fg = "White", command=lambda: self.db.add_sound_into_playlist(add_l.get(), playlist_title))
+            add_b.grid(padx=20, pady = 5, row=r+2, column=0)
             
         
         def delete_button():
@@ -153,8 +168,8 @@ class Gui():
             self.db.remove_sound_from_playlist(var.get(), playlist_title)
             self.sound.update()
             
-        play_delete = Button(frame_buttons, text="Delete", padx=50, pady = 5, command=delete_button)
-        play_delete.grid(row=0, column=2, padx=50, pady = 5)
+        play_delete = Button(frame_buttons, text="Delete", padx=50, pady = 5, command=delete_button, bg="Red", fg="White")
+        play_delete.grid(row=r, column=3, pady = 5, padx=10)
 
     
     
