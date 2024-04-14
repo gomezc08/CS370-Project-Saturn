@@ -36,10 +36,13 @@ class Gui():
         self.playlist.geometry("950x500")
         self.playlist.configure(bg=self.bg_color)
         
-        # initialize title/label for radio buttons.
-        Label(self.playlist, text="Select Playlist", font=("Arial", 15), padx=50, pady=5, fg="Black", bg=self.bg_color).pack(anchor=W)
+        # Playlist Manager title.
+        Label(self.playlist, text="Playlist", font=("Arial", 20), padx=50, pady=5, fg="Black", bg=self.bg_color).grid(pady=10, row=0, column=2)
         
-        # Display playlists using radio buttons.
+        # Select Playlist.
+        Label(self.playlist, text="Select Playlist", font=("Arial", 15), padx=50, pady=5, fg="Black", bg=self.bg_color).grid(sticky=W, pady=10, padx=30, row=1, column=1)
+        
+        # Radio buttons (for each playlist).
         playlists = self.db.view_playlists()
         self.radio_vars = {}
         var = StringVar(value="Small")
@@ -47,34 +50,52 @@ class Gui():
         def update_label():
             playlist_label.config(text=var.get())
 
+        r = 2
         for playlist in playlists:
             self.radio_vars[playlist[0]] = var 
-            r_button = Radiobutton(self.playlist, text=playlist[0], variable=var, value=playlist[0], command=update_label, fg="Black", bg=self.bg_color)
-            r_button.pack(anchor=W, padx=50, pady = 5)
+            r_button = Radiobutton(self.playlist, text=playlist[0], variable=var, value=playlist[0], padx=50, pady=5, command=update_label, fg="Black", bg=self.bg_color)
+            r_button.grid(sticky=W, pady=2, padx=30, column=1, row=r)
+            r += 1
 
-        # click on radio button label.
-        playlist_label = Label(self.playlist, text="", fg="Black", bg=self.bg_color)
-        playlist_label.pack(anchor=W, padx=50, pady = 5)
+        # Radio button label.
+        playlist_label = Label(self.playlist, text="", fg="Black", bg=self.bg_color, padx=50, pady=5)
+        playlist_label.grid(sticky=W, padx=30, pady = 5, column=1, row=r)
+        r += 1
 
-        # button that looks into playlist.
         def continue_with_selection():
             self.sounds_screen(var.get())
+        
+        # continue button.
+        b = Button(self.playlist, text="Continue", command=continue_with_selection, padx=20, pady = 5, fg="White", bg="Green")
+        b.grid(padx=20, pady = 5, row=r, column=1, sticky=W) 
+        
+        # delete button.
+        def delete_btn_command():
+            """
+            This function is bound to the delete_btn and is called when we click delete button.
+            This function deletes a playlist that isn't our library.
+            """
+            if var.get() != "Your Library":
+                print("this is NOT ur library")
+                self.db.delete_playlist(var.get())
+        
+        delete_btn = Button(self.playlist, text="Delete Playlist", bg = "Red", fg = "White", padx=20, pady=5, command=delete_btn_command)
+        delete_btn.grid(pady = 5, row=r, column=1, sticky=E)
 
-        # "+" button
-        Label(self.playlist, text="Create new Playlist", font=("Arial", 15), padx=50, pady=5, fg="Black", bg=self.bg_color).pack(anchor=E)
+        # Create new Playlist label.
+        Label(self.playlist, text="Create new Playlist", font=("Arial", 15), padx=50, pady=5, fg="Black", bg=self.bg_color).grid(row=1, column=3, sticky=W)
+        
+        # white entry box.
         e = Entry(self.playlist, width=50)
-        e.pack(anchor=E, padx=50, pady=5)
+        e.grid(padx=50, pady=5, row=2, column=3, sticky=E)
             
-        plus_button = Button(self.playlist, text="+", padx=50, pady=5, fg="Black", bg=self.bg_color, command=lambda: self.db.create_playlist(e.get()))
-        plus_button.pack(anchor=E, padx=50, pady=5)
-
-        # "Continue" button
-        b = Button(self.playlist, text="Continue", command=continue_with_selection, padx=50, pady = 5, fg="Black", bg=self.bg_color)
-        b.pack(anchor=W, padx=50, pady = 5)
+        # Create Playlist button.
+        plus_button = Button(self.playlist, text="Create Playlist", padx=50, pady=5, fg="White", bg="Purple", command=lambda: self.db.create_playlist(e.get()))
+        plus_button.grid(padx=50, pady=5, column=3, row=3, sticky=W) 
 
     def sounds_screen(self, playlist_title):
         # intialize screen.
-        self.playlist.destroy()  
+        self.playlist.destroy() 
         self.sound = Toplevel()
         self.sound.title("Playlists Screen")
         self.sound.geometry("950x500")
