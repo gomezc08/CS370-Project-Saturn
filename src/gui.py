@@ -139,6 +139,9 @@ class Gui():
         sound_label.grid(row=r, column=0, sticky=W, padx=50, pady=5)
         r += 1
 
+        def next_screen():
+            self.edit_screen(var.get())  
+            
         # play, edit, delete buttons.
         frame_buttons = Frame(self.sound, bg=self.bg_color)
         frame_buttons.grid(row=r, column=0, pady=5)
@@ -146,7 +149,7 @@ class Gui():
         play_btn = Button(frame_buttons, text="Play", command=lambda: self.saturn_instance.play(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/sounds/" + var.get() + ".mp3"), padx=50, pady = 5, bg="Green", fg="white")
         play_btn.grid(row=r, column=1, pady=5, padx=10)
 
-        play_edit = Button(frame_buttons, text="Edit", padx=50, pady = 5, command=self.edit_screen, bg="Blue", fg="white")
+        play_edit = Button(frame_buttons, text="Edit", padx=50, pady = 5, command=next_screen, bg="Blue", fg="white")
         play_edit.grid(row=r, column=2, pady=5, padx=10)
 
         # add sound button (only shows up in non your library playlists).
@@ -173,7 +176,7 @@ class Gui():
 
     
     
-    def edit_screen(self):
+    def edit_screen(self, sound_name):
         # initialize screen.
         self.sound.destroy()
         self.edit = Toplevel()
@@ -201,7 +204,7 @@ class Gui():
             {"text": "Random Insert", "row": 5, "column": 1, "columnspan": 5}
         ]
         for button_data in buttons_data:
-            button = Button(self.edit, text=button_data["text"], fg="Black", bg=self.bg_color, padx=10, pady=5)
+            button = Button(self.edit, text=button_data["text"], fg="Black", bg="Yellow", padx=10, pady=5)
             button.grid(row=button_data["row"], column=button_data["column"], columnspan=button_data["columnspan"], sticky=W)
 
         # play button.
