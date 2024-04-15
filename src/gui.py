@@ -131,12 +131,12 @@ class Gui():
             Radiobutton(self.sound, text=sound[0], variable=var, value=sound[0], command=update_label, fg="Black", bg=self.bg_color).grid(row=r, column=c, sticky=W, padx=10, pady=5)
             r += 1
         
-        if c > 1:
-            r = 5
+        if c > 0:
+            r = 8
             
         # radio button label.
         sound_label = Label(self.sound, text="", fg="Black", bg=self.bg_color)
-        sound_label.grid(row=r, column=0, sticky=W, padx=50, pady=5)
+        sound_label.grid(row=r, column=0, sticky=W, padx=10, pady=5)
         r += 1
 
         def next_screen():
@@ -147,10 +147,10 @@ class Gui():
         frame_buttons.grid(row=r, column=0, pady=5)
         
         play_btn = Button(frame_buttons, text="Play", command=lambda: self.saturn_instance.play(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/sounds/" + var.get() + ".mp3"), padx=50, pady = 5, bg="Green", fg="white")
-        play_btn.grid(row=r, column=1, pady=5, padx=10)
+        play_btn.grid(row=r, column=1, pady=15, padx=10)
 
         play_edit = Button(frame_buttons, text="Edit", padx=50, pady = 5, command=next_screen, bg="Blue", fg="white")
-        play_edit.grid(row=r, column=2, pady=5, padx=10)
+        play_edit.grid(row=r, column=2, pady=15, padx=10)
 
         # add sound button (only shows up in non your library playlists).
         if(playlist_title != "Your Library"):
@@ -172,11 +172,12 @@ class Gui():
             self.sound.update()
             
         play_delete = Button(frame_buttons, text="Delete", padx=50, pady = 5, command=delete_button, bg="Red", fg="White")
-        play_delete.grid(row=r, column=3, pady = 5, padx=10)
-
-    
+        play_delete.grid(row=r, column=3, pady = 15, padx=10)    
     
     def edit_screen(self, sound_name):
+        active_color = "#211C6A"
+        inactive_color = "#EFF396"
+        
         # initialize screen.
         self.sound.destroy()
         self.edit = Toplevel()
@@ -192,21 +193,51 @@ class Gui():
         Label(self.edit, text="Sequential", fg="Black", bg=self.bg_color, font=("Courier New", 10)).grid(row=4, column=0, padx=50, pady=15, sticky=W)
         Label(self.edit, text="Random Insert", fg="Black", bg=self.bg_color, font=("Courier New", 10)).grid(row=5, column=0, padx=50, pady=15, sticky=W)
         
-        # working in the 1st column: adding buttons for ALL edit features.
-        buttons_data = [
-            {"text": "Up", "row": 0, "column": 1, "columnspan": 2},
-            {"text": "Down", "row": 0, "column": 4, "columnspan": 2},
-            {"text": "Up", "row": 1, "column": 1, "columnspan": 2},
-            {"text": "Down", "row": 1, "column": 4, "columnspan": 2},
-            {"text": "Reverse", "row": 2, "column": 1, "columnspan": 5},
-            {"text": "Overlap", "row": 3, "column": 1, "columnspan": 5},
-            {"text": "Sequential", "row": 4, "column": 1, "columnspan": 5},
-            {"text": "Random Insert", "row": 5, "column": 1, "columnspan": 5}
-        ]
-        for button_data in buttons_data:
-            button = Button(self.edit, text=button_data["text"], fg="Black", bg="Yellow", padx=10, pady=5)
-            button.grid(row=button_data["row"], column=button_data["column"], columnspan=button_data["columnspan"], sticky=W)
-
+        
+        # speed up/down buttons.
+        speed_up_button = Button(self.edit, text="Up", fg="Black", bg="Yellow", padx=10, pady=5)
+        speed_up_button.grid(row=0, column=1, columnspan=2, sticky=W)
+        speed_down_button = Button(self.edit, text="Down", fg="Black", bg="Yellow", padx=10, pady=5)
+        speed_down_button.grid(row=0, column=4, columnspan=2, sticky=W)
+        # speed Label.
+        speed_label = Label(self.edit, text="Normal").grid(row=0, column=7, columnspan=2)
+        
+        # pitch up/down buttons.
+        pitch_up_button = Button(self.edit, text="Up", fg="Black", bg="Yellow", padx=10, pady=5)
+        pitch_up_button.grid(row=1, column=1, columnspan=2, sticky=W)
+        pitch_down_button = Button(self.edit, text="Down", fg="Black", bg="Yellow", padx=10, pady=5)
+        pitch_down_button.grid(row=1, column=4, columnspan=2, sticky=W)
+        # pitch Label.
+        pitch_label = Label(self.edit, text="Normal").grid(row=1, column=7, columnspan=2)
+        
+        # reverse button.
+        def toggle_btn_click(button):
+            if button["bg"] == inactive_color:
+                button["bg"] = active_color
+            else:
+                button["bg"] = inactive_color
+            
+        reverse_button = Button(self.edit, text="Reverse", fg="black", bg=inactive_color, padx=10, pady=5, command=lambda: toggle_btn_click(reverse_button))
+        reverse_button.grid(row=2, column=1, columnspan=5, sticky=W)
+        
+        # overlap.
+        overlap_button = Button(self.edit, text="Overlap", fg="Black", bg=inactive_color, padx=10, pady=5, command=lambda: toggle_btn_click(overlap_button))
+        overlap_button.grid(row=3, column=1, columnspan=5, sticky=W) 
+        overlap_entry = Entry(self.edit, width=30)
+        overlap_entry.grid(row=3, column=7, columnspan=3)
+        
+        # sequential.
+        seq_button = Button(self.edit, text="Sequential", fg="Black", bg=inactive_color, padx=10, pady=5, command=lambda: toggle_btn_click(seq_button))
+        seq_button.grid(row=4, column=1, columnspan=5, sticky=W) 
+        seq_entry = Entry(self.edit, width=30)
+        seq_entry.grid(row=4, column=7, columnspan=3)
+        
+        # rand insert.
+        rand_button = Button(self.edit, text="Random Insert", fg="Black", bg=inactive_color, padx=10, pady=5, command=lambda: toggle_btn_click(rand_button))
+        rand_button.grid(row=5, column=1, columnspan=5, sticky=W) 
+        rand_entry = Entry(self.edit, width=30)
+        rand_entry.grid(row=5, column=7, columnspan=3)
+        
         # play button.
         button = Button(self.edit, text="Play", fg="White", bg="Green", padx=30, pady=5)
         button.grid(row=7, column=1, columnspan=5, sticky=W, pady=20)
