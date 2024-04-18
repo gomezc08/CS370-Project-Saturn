@@ -6,7 +6,7 @@ parent_dir = os.path.dirname(os.getcwd())
 sys.path.insert(0, parent_dir + "/Database")
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from Database.PlaylistManager import PlaylistManager
+from database.PlaylistManager import PlaylistManager
 from src.saturn_cli import Saturn
 
 class Gui():
