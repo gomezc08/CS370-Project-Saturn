@@ -400,13 +400,10 @@ class Saturn:
             )
             sys.exit(1)
 
-    def change_pitch_command(self):
-        # Change the pitch of an audio file
-        if self.argvlen > 3:
-            file_path = self.argv[2]
-            semitones = float(
-                self.argv[3]
-            )  # The number of semitones to shift the pitch
+    def change_pitch_command(self, file_path, semitones):
+    # Change the pitch of an audio file
+        if file_path and semitones is not None:
+            semitones = float(semitones)  # The number of semitones to shift the pitch
             if file_path[0] == ".":
                 file_path = str(os.getcwd()) + file_path[1:]
             print(
