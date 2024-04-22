@@ -37,11 +37,19 @@ class BaseClass(Tk):
         
         self.db = PlaylistManager()
         self.saturn = Saturn(sys.argv, len(sys.argv))
-    
+
     def switch_frames(self, next_frame, sound_argument=None):
         self.destroy()
         if sound_argument is not None:
             app = next_frame(sound_argument)
+        else:
+            app = next_frame()
+        app.mainloop()
+        
+    def update_frame(self, next_frame, sound_argument=None, sort=None):
+        self.destroy()
+        if sound_argument is not None:
+            app = next_frame(sound_argument, sort)
         else:
             app = next_frame()
         app.mainloop()
@@ -85,6 +93,7 @@ class PlaylistFrame(BaseClass):
         # initialize screen. 
         BaseClass.__init__(self, *args, **kwargs)
         self.config(bg=self.bg_color)
+        self.entry = Entry(self, width=50)
         
         # layout screen.
         # Playlist Manager title.
@@ -111,24 +120,31 @@ class PlaylistFrame(BaseClass):
         continue_button.grid(padx=20, pady=5, row=idx + 1, column=1, sticky=W) 
 
         # delete button.
-        delete_btn = Button(self, text="Delete Playlist", bg="Red", fg="White", padx=20, pady=5, command=lambda: self.db.delete_playlist(self.radio_item.get()))
+        delete_btn = Button(self, text="Delete Playlist", bg="Red", fg="White", padx=20, pady=5, command=self.delete_playlist)
         delete_btn.grid(pady=5, row=idx + 1, column=1, sticky=E)
 
         # Create new Playlist label.
         Label(self, text="Create new Playlist", font=(self.font_title, 15), padx=50, pady=5, fg="Black", bg=self.bg_color).grid(row=1, column=3, sticky=W)
         
         # white entry box.
-        entry = Entry(self, width=50)
-        entry.grid(padx=50, pady=5, row=2, column=3, sticky=E)
+        self.entry.grid(padx=50, pady=5, row=2, column=3, sticky=E)
             
         # Create Playlist button.
-        plus_button = Button(self, text="Create Playlist", bg=self.default_button_color, fg="White", padx=50, pady=5, command=lambda: self.db.create_playlist(entry.get()))
+        plus_button = Button(self, text="Create Playlist", bg=self.default_button_color, fg="White", padx=50, pady=5, command=self.create_playlist)
         plus_button.grid(padx=50, pady=5, column=3, row=3, sticky=W) 
     
     def continue_with_selection(self):
         self.sound_item = self.radio_item.get()
         self.switch_frames(SoundFrame, sound_argument=self.radio_item.get())
 
+    def create_playlist(self):
+        self.db.create_playlist(self.entry.get())
+        self.update_frame(PlaylistFrame)
+    
+    def delete_playlist(self):
+        self.db.delete_playlist(self.radio_item.get())
+        self.update_frame(PlaylistFrame)
+    
 class SoundFrame(BaseClass):
     """
     Frame for sound screen of our sound archive app.
@@ -140,11 +156,14 @@ class SoundFrame(BaseClass):
         continue_with_selection: handles setting up next frame.
         delete_button: removes the sound selected in the playlist and updates the display accordingly.
     """
-    def __init__(self, playlist_t, **kwargs):    
+    def __init__(self, playlist_title, sort_name = None, **kwargs):    
         # initialize screen.      
         BaseClass.__init__(self, **kwargs)
-        self.playlist_title = playlist_t
+        self.playlist_title = playlist_title
         self.config(bg=self.bg_color)
+        self.dropdown_item = StringVar(value="Sort by")
+        self.sort_name = sort_name
+        print(f"here is the sort name: {self.sort_name}")
 
 		# layout screen.
         # [Playlist title].
@@ -154,7 +173,7 @@ class SoundFrame(BaseClass):
         Label(self, text="Select Sound", font=(self.font_title, 15), pady=5, fg="Black", bg=self.bg_color).grid(padx=20, pady=10, row=1, column=2, sticky=W)
         
         # setting-up for radio buttons.
-        playlist = self.db.view_sort_playlist(self.playlist_title)
+        playlist = self.db.view_sort_playlist(self.playlist_title, self.sort_name)
 
         # playlist radio buttons.
         # add sounds in rows of 7.
@@ -191,17 +210,26 @@ class SoundFrame(BaseClass):
             # creating the button.
             add_b = Button(self, text="Add to this Playlist", padx=50, pady = 5, bg = self.default_button_color, fg = "White", command=lambda: self.db.add_sound_into_playlist(add_l.get(), self.playlist_title))
             add_b.grid(padx=20, pady = 5, row=r+2, column=0)
-            
-        play_delete = Button(self, text="Delete", padx=50, pady=5, command=self.delete_button, bg="Red", fg="White")
-        play_delete.grid(row=r, column=3, pady=20, padx=10)  
-    
+        
+        # remove sound from playlist button.    
+        remove_button = Button(self, text="Remove", padx=50, pady=5, command=self.remove_button, bg="Red", fg="White")
+        remove_button.grid(row=r, column=3, pady=20, padx=10)  
+        
+        # Sort by dropdown.
+        sort_options = ["Title", "Length", "DateCreated"] 
+        sort_dropdown = OptionMenu(self, self.dropdown_item, *sort_options).grid(row=r+3, column=2)
+
+        # Go button for dropdown.
+        ok_button = Button(self, text="Go", padx=30, pady=5, command=lambda: self.update_frame(SoundFrame, playlist_title, self.dropdown_item.get()), bg="green", fg="White")
+        ok_button.grid(row=r+4, column=2, pady=20, padx=10)
+        
     def continue_with_selection(self):
         self.sound_item = self.radio_item.get()
         self.switch_frames(EditFrame, sound_argument=self.radio_item.get())
     
-    def delete_button(self):
+    def remove_button(self):
         self.db.remove_sound_from_playlist(self.radio_item.get(), self.playlist_title)
-        self.update()
+        self.update_frame(SoundFrame, self.playlist_title)
 
 class EditFrame(BaseClass):
     """

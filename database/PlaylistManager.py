@@ -41,12 +41,12 @@ class PlaylistManager:
         self.connector.open_connection()
 
         try:
+            # Sort playlist.
             if sort_name:
                 # Verify sort_name is valid.
                 if sort_name not in self.sort_type:
                     raise Exception(f"Invalid sorting name: {sort_name}")
 
-                # Sort playlist (database query here).
                 self.connector.cursor.execute(
                     f"SELECT * FROM soundlist ORDER BY {sort_name}"
                 )
