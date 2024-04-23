@@ -1,4 +1,4 @@
-from DBConnector import DBConnector
+from database.DBConnector import DBConnector
 import sys
 import os
 

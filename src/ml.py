@@ -5,75 +5,68 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 
+class AudioClustering:
+    def __init__(self, audio_dir="sounds/", sr=22050, n_mfcc=13):
+        self.audio_dir = audio_dir
+        self.sr = sr
+        self.n_mfcc = n_mfcc
 
-def extract_mfcc(audio_file, sr=22050, n_mfcc=13):
-    """
-    Extracts Mel-Frequency Cepstral Coefficients (MFCC) features from an audio file.
+    def extract_mfcc(self, audio_file):
+        """
+        Extracts Mel-Frequency Cepstral Coefficients (MFCC) features from an audio file.
 
-    Parameters:
-    - audio_file: Path to the audio file
-    - sr: Sampling rate (default: 22050 Hz)
-    - n_mfcc: Number of MFCC coefficients to extract (default: 13)
+        Parameters:
+        - audio_file: Path to the audio file
 
-    Returns:
-    - mfcc_features: Extracted MFCC features
-    """
-    # Load audio file
-    y, sr = librosa.load(audio_file, sr=sr)
+        Returns:
+        - mfcc_features: Extracted MFCC features
+        """
+        # Load audio file
+        y, sr = librosa.load(audio_file, sr=self.sr)
 
-    # Extract MFCC features
-    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
+        # Extract MFCC features
+        mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=self.n_mfcc)
 
-    # Compute the mean of each MFCC coefficient over time
-    mfcc_features = np.mean(mfcc, axis=1)
+        # Compute the mean of each MFCC coefficient over time
+        mfcc_features = np.mean(mfcc, axis=1)
 
-    return mfcc_features
+        return mfcc_features
 
+    def cluster_audio_files(self, n_clusters=3, linkage="ward"):
+        # List all audio files in the directory
+        audio_files = [os.path.join(self.audio_dir, file) for file in os.listdir(self.audio_dir)]
 
-# Directory containing audio files
-audio_dir = "sounds/"
+        # Extract MFCC features for all audio files
+        mfcc_features_list = [self.extract_mfcc(audio_file) for audio_file in audio_files if not audio_file.endswith(".ogg")]
 
+        # Convert the list of features into a numpy array
+        X = np.array(mfcc_features_list)
 
-print(extract_mfcc("sounds/coffee.wav"))
+        # Preprocessing: Scale the features
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
 
-# List all audio files in the directory
-audio_files = [os.path.join(audio_dir, file) for file in os.listdir(audio_dir)]
+        # Clustering
+        # Using hierarchical clustering
+        agg_clustering = AgglomerativeClustering(
+            n_clusters=n_clusters, linkage=linkage
+        )  # You can adjust the number of clusters and linkage method
+        cluster_labels = agg_clustering.fit_predict(X_scaled)
 
-print(audio_files)
+        # Group audio files based on cluster labels
+        clusters = {}
+        for i, label in enumerate(cluster_labels):
+            filename = os.path.basename(audio_files[i])
+            if label not in clusters:
+                clusters[label] = [filename]
+            else:
+                clusters[label].append(filename)
+        
+        # Get audio files that did not get clustered
+        unclustered_files = [audio_files[i] for i, label in enumerate(cluster_labels) if label == -1]
+        
+        # Create a new cluster for unclustered files
+        if unclustered_files:
+            clusters["unclustered"] = [os.path.basename(file) for file in unclustered_files]
 
-# Extract MFCC features for all audio files
-mfcc_features_list = [extract_mfcc(audio_file) for audio_file in audio_files if audio_file.endswith(".wav") or audio_file.endswith(".mp3")]
-
-# Convert the list of features into a numpy array
-X = np.array(mfcc_features_list)
-
-# Preprocessing: Scale the features
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
-# Clustering
-# Using hierarchical clustering
-agg_clustering = AgglomerativeClustering(
-    n_clusters=3, linkage="ward"
-)  # You can adjust the number of clusters and linkage method
-cluster_labels = agg_clustering.fit_predict(X_scaled)
-
-# Evaluation
-silhouette_avg = silhouette_score(X_scaled, cluster_labels)
-print("Silhouette Score:", silhouette_avg)
-
-# Group audio files based on cluster labels
-clusters = {}
-for i, label in enumerate(cluster_labels):
-    filename = os.path.basename(audio_files[i])
-    if label not in clusters:
-        clusters[label] = [filename]
-    else:
-        clusters[label].append(filename)
-
-# Print filenames in each cluster
-for cluster_label, filenames in clusters.items():
-    print(f"Cluster {cluster_label}:")
-    for filename in filenames:
-        print(filename)
-    print()
+        return clusters
