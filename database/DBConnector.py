@@ -29,11 +29,11 @@ class DBConnector:
     def open_connection(self):
         print("<<Opening>> connection to MySQL")
         config = {
-            "user": "root",
-            "password": "!WhitmanMemo08?",
-            "host": "127.0.0.1",
-            "port": 3307,
-            "database": "soundarchive",
+            "user": "AidanVB",
+            "password": "2ibtxFzCi95AqWFpZb6O",
+            "host": "database-test1.cb6ak8csmzrs.us-west-2.rds.amazonaws.com",
+            "port": 3306,
+            "database": "saturnDB",
             "raise_on_warnings": True,
         }
 
@@ -139,3 +139,6 @@ class DBConnector:
 
         # CLOSE CONNECTION.
         self.close_connection()
+
+db = DBConnector("../sounds")
+db.init_playlist()
