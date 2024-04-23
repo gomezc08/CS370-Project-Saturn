@@ -26,6 +26,8 @@ class Backend():
 
         self.audioSegment = None
         self.changedAudioSegment = None
+        
+        self.reversed = False
 
         self.load_audio(audio_file)
 
@@ -42,8 +44,13 @@ class Backend():
         # TODO: This likely won't work.
         self.changedAudioSegment = self.audioSegment.pitch_change(semitones=change_amnt)
 
-    def backwards(self):
-        self.changedAudioSegment = self.audioSegment.reverse()
+    def reverse(self):
+        if self.reversed == False:
+            self.reversed = True
+            self.changedAudioSegment = self.audioSegment.reverse()
+        if self.reversed == True:
+            self.reversed = False
+            self.changedAudioSegment = self.audioSegment.reverse()
 
     def revert(self):
         self.changedAudioSegment = self.audioSegment
@@ -54,3 +61,4 @@ class Backend():
     def save(self, name):
         self.changedAudioSegment.export(name, format="wav")
 
+    
