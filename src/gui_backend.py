@@ -6,7 +6,8 @@ from saturn_cli import Saturn
 from ml import AudioClustering
 from database.PlaylistManager import PlaylistManager
 
-class Backend():
+
+class Backend:
     def __init__(self, audio_file):
         clustering = AudioClustering()
         self.saturn = Saturn.getInstance()
@@ -14,7 +15,7 @@ class Backend():
 
         # Delete all playlists that have 'cluster' in the name anywhere
         for playlist in playlistManager.view_playlists():
-            if 'cluster' in playlist:
+            if "cluster" in playlist:
                 playlistManager.delete_playlist(playlist)
 
         clusters = clustering.cluster_audio_files()
@@ -26,11 +27,10 @@ class Backend():
 
         self.audioSegment = None
         self.changedAudioSegment = None
-        
+
         self.reversed = False
 
         self.load_audio(audio_file)
-
 
     def load_audio(self, audio_file):
         self.audioSegment = self.saturn.getSound(audio_file)
@@ -61,4 +61,12 @@ class Backend():
     def save(self, name):
         self.changedAudioSegment.export(name, format="wav")
 
-    
+    def overlap(self):
+        pass
+
+    def concatentate(self):
+        pass
+
+    def randomInsert(self):
+        # Need to have a check for the audio to be inserted is longer than select audio
+        pass

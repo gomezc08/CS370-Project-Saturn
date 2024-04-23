@@ -5,6 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 
+
 class AudioClustering:
     def __init__(self, audio_dir="sounds/", sr=22050, n_mfcc=13):
         self.audio_dir = audio_dir
@@ -34,10 +35,16 @@ class AudioClustering:
 
     def cluster_audio_files(self, n_clusters=3, linkage="ward"):
         # List all audio files in the directory
-        audio_files = [os.path.join(self.audio_dir, file) for file in os.listdir(self.audio_dir)]
+        audio_files = [
+            os.path.join(self.audio_dir, file) for file in os.listdir(self.audio_dir)
+        ]
 
         # Extract MFCC features for all audio files
-        mfcc_features_list = [self.extract_mfcc(audio_file) for audio_file in audio_files if not audio_file.endswith(".ogg")]
+        mfcc_features_list = [
+            self.extract_mfcc(audio_file)
+            for audio_file in audio_files
+            if not audio_file.endswith(".ogg")
+        ]
 
         # Convert the list of features into a numpy array
         X = np.array(mfcc_features_list)
@@ -61,12 +68,16 @@ class AudioClustering:
                 clusters[label] = [filename]
             else:
                 clusters[label].append(filename)
-        
+
         # Get audio files that did not get clustered
-        unclustered_files = [audio_files[i] for i, label in enumerate(cluster_labels) if label == -1]
-        
+        unclustered_files = [
+            audio_files[i] for i, label in enumerate(cluster_labels) if label == -1
+        ]
+
         # Create a new cluster for unclustered files
         if unclustered_files:
-            clusters["unclustered"] = [os.path.basename(file) for file in unclustered_files]
+            clusters["unclustered"] = [
+                os.path.basename(file) for file in unclustered_files
+            ]
 
         return clusters

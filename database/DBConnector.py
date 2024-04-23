@@ -140,5 +140,6 @@ class DBConnector:
         # CLOSE CONNECTION.
         self.close_connection()
 
+
 db = DBConnector("../sounds")
 db.init_playlist()
