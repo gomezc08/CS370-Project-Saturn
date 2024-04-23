@@ -13,8 +13,10 @@ class Backend():
         playlistManager = PlaylistManager()
 
         # Delete all playlists that have 'cluster' in the name anywhere
-        
-        
+        for playlist in playlistManager.view_playlists():
+            if 'cluster' in playlist:
+                playlistManager.delete_playlist(playlist)
+
         clusters = clustering.cluster_audio_files()
 
         for cluster_name in clusters.keys():
