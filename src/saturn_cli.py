@@ -401,7 +401,7 @@ class Saturn:
             sys.exit(1)
 
     def change_pitch_command(self, file_path, semitones):
-    # Change the pitch of an audio file
+        # Change the pitch of an audio file
         if file_path and semitones is not None:
             semitones = float(semitones)  # The number of semitones to shift the pitch
             if file_path[0] == ".":
