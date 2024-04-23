@@ -21,14 +21,16 @@ class BaseClass(Tk):
         sound_item (str): Shared variable of the actual button user clicked on for the playlist and sound name.
     
     Methods:
-        switch_frames: Destroy the current frame and switch to the next frame.
+        next_frame: Destroys the current frame and switches to the next frame.
+        next_frame: Destroys the current frame and switches to the previous frame.
+        update_frame: Destroys and reloads the current frame (same idea as refreshing a page).
     """
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
                 
         # Set up common attributes
         self.font_title = "Courier New" 
-        self.geometry("950x500")
+        self.geometry("950x600")
         self.title("Saturn Sound Archive")
         self.default_button_color = "#102C57"
         self.bg_color = "#ead6b8"
@@ -38,14 +40,14 @@ class BaseClass(Tk):
         self.db = PlaylistManager()
         self.saturn = Saturn(sys.argv, len(sys.argv))
 
-    def switch_frames(self, next_frame, sound_argument=None):
+    def next_frame(self, next_frame, sound_argument=None):
         self.destroy()
         if sound_argument is not None:
             app = next_frame(sound_argument)
         else:
             app = next_frame()
         app.mainloop()
-        
+    
     def update_frame(self, next_frame, sound_argument=None, sort=None):
         self.destroy()
         if sound_argument is not None:
@@ -75,7 +77,7 @@ class HomeFrame(BaseClass):
         self.saturn_img = ImageTk.PhotoImage(Image.open('./saturn.png'))
         self.root_label = Label(self, image=self.saturn_img)
         self.root_label.pack(pady=20)  
-        self.root_btn = Button(self, text="Continue", command=lambda: self.switch_frames(PlaylistFrame), padx=50, pady=5, fg="White", bg=self.default_button_color)
+        self.root_btn = Button(self, text="Continue", command=lambda: self.next_frame(PlaylistFrame), padx=50, pady=5, fg="White", bg=self.default_button_color)
         self.root_btn.pack(pady=20)
 
 class PlaylistFrame(BaseClass):
@@ -83,10 +85,12 @@ class PlaylistFrame(BaseClass):
     Frame for playlist screen of our sound archive app.
     
     Attributes:
-        None
+        entry (Entry): White prompt box which allows user to type name of playlist they want to create.
     
     Methods:
         continue_with_selection: handles setting up next frame.
+        create_new_playlist: handles setting up a new playlist in database.
+        delete_playlist: handles deleting playlist from database.
     """
 
     def __init__(self, *args, **kwargs):         
@@ -97,7 +101,7 @@ class PlaylistFrame(BaseClass):
         
         # layout screen.
         # Playlist Manager title.
-        Label(self, text="Playlist", font=(self.font_title, 20), padx=50, pady=5, fg="Black", bg=self.bg_color).grid(pady=10, row=0, column=2)
+        Label(self, text="Playlist", font=(self.font_title, 20), padx=50, pady=5, fg="Black", bg=self.bg_color).grid(pady=10, row=0, column=2, padx=5)
         
         # Select Playlist.
         Label(self, text="Select Playlist", font=(self.font_title, 15), padx=50, pady=5, fg="Black", bg=self.bg_color).grid(sticky=W, pady=10, padx=30, row=1, column=1)
@@ -130,14 +134,21 @@ class PlaylistFrame(BaseClass):
         self.entry.grid(padx=50, pady=5, row=2, column=3, sticky=E)
             
         # Create Playlist button.
-        plus_button = Button(self, text="Create Playlist", bg=self.default_button_color, fg="White", padx=50, pady=5, command=self.create_playlist)
+        plus_button = Button(self, text="Create Playlist", bg=self.default_button_color, fg="White", padx=50, pady=5, command=self.create_new_playlist)
         plus_button.grid(padx=50, pady=5, column=3, row=3, sticky=W) 
+        
+        # back button.
+        back_button = Button(self, text="Back", padx=20, command=lambda: self.next_frame(HomeFrame))
+        back_button.grid(pady=90, padx=30, row=idx+2, column=1, sticky=W)
     
     def continue_with_selection(self):
-        self.sound_item = self.radio_item.get()
-        self.switch_frames(SoundFrame, sound_argument=self.radio_item.get())
+        #self.playlist_name = self.radio_item.get()
+        #self.playlist_name
+        self.playlist_name = self.radio_item.get()
+        self.sound_item = self.playlist_name
+        self.next_frame(SoundFrame, sound_argument=self.radio_item.get())
 
-    def create_playlist(self):
+    def create_new_playlist(self):
         self.db.create_playlist(self.entry.get())
         self.update_frame(PlaylistFrame)
     
@@ -151,10 +162,12 @@ class SoundFrame(BaseClass):
     
     Attributes:
         playlist_title (str): User chosen playlist title from previous frame specifiec using radio buttons.
+        dropdown_item (StringVar): handles drop down entry options that user clicks on.
+        sort_name (str): user chosen drop down item that they want to sort the sounds in the playlist by.
     
     Methods:
         continue_with_selection: handles setting up next frame.
-        delete_button: removes the sound selected in the playlist and updates the display accordingly.
+        remove_button: removes the sound selected in the playlist and updates the display accordingly.
     """
     def __init__(self, playlist_title, sort_name = None, **kwargs):    
         # initialize screen.      
@@ -163,7 +176,6 @@ class SoundFrame(BaseClass):
         self.config(bg=self.bg_color)
         self.dropdown_item = StringVar(value="Sort by")
         self.sort_name = sort_name
-        print(f"here is the sort name: {self.sort_name}")
 
 		# layout screen.
         # [Playlist title].
@@ -227,9 +239,13 @@ class SoundFrame(BaseClass):
         ok_button = Button(self, text="Go", padx=30, pady=5, command=lambda: self.update_frame(SoundFrame, playlist_title, self.dropdown_item.get()), bg="green", fg="White")
         ok_button.grid(row=r+4, column=2, pady=20, padx=10)
         
+        # back button.
+        back_button = Button(self, text="Back", padx=20, command=lambda: self.next_frame(PlaylistFrame))
+        back_button.grid(pady=90, padx=30, row=r+5, column=0, sticky=W)
+        
     def continue_with_selection(self):
         self.sound_item = self.radio_item.get()
-        self.switch_frames(EditFrame, sound_argument=self.radio_item.get())
+        self.next_frame(EditFrame, sound_argument=self.radio_item.get())
     
     def remove_button(self):
         self.db.remove_sound_from_playlist(self.radio_item.get(), self.playlist_title)
@@ -247,10 +263,10 @@ class EditFrame(BaseClass):
     Methods:
         toggle_btn_click: handles activating and deactivating a button when pressed.
     """
-    def __init__(self, sound_t, **kwargs):          
+    def __init__(self, sound_title, **kwargs):          
         BaseClass.__init__(self, **kwargs)
         self.config(bg=self.bg_color)
-        self.sound_title = sound_t
+        self.sound_title = sound_title
         self.active_color = "#FFD700"
         self.inactive_color = "#FFFACD"
         
@@ -320,6 +336,10 @@ class EditFrame(BaseClass):
         # save button.
         button_save = Button(self, text="Save", fg="White", bg=self.default_button_color, padx=30, pady=5)
         button_save.grid(row=7, column=2, sticky=E, pady=20)
+        
+        # back button.
+        back_button = Button(self, text="Back", padx=20, command=lambda: self.next_frame(PlaylistFrame))
+        back_button.grid(pady=90, padx=30, row=8, column=0, sticky=W)
     
     def toggle_btn_click(self, button):
         if button["bg"] == self.inactive_color:
