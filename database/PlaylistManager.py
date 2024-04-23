@@ -78,26 +78,24 @@ class PlaylistManager:
 
         return playlist_list
 
-
     def view_playlists(self):
         playlists = []
         self.connector.open_connection()
         try:
             query = "SELECT * FROM playlistnames"
             self.connector.cursor.execute(query)
-            #self.connector.cnx.commit()
+            # self.connector.cnx.commit()
             results = self.connector.cursor.fetchall()
             for result in results:
                 playlists.append(result)
-            
+
         except Exception:
             print(f"Error loading playlists")
 
         finally:
             self.connector.close_connection()
-        
+
         return playlists
-        
 
     def create_playlist(self, playlist_name):
         # if playlist_name not in self.playlist_list:

@@ -1,7 +1,11 @@
 import tkinter as tk
+
+
 def on_option_select():
     selected = selected_option.get()
     result_label.config(text=f"Selected Option: {selected}")
+
+
 root = tk.Tk()
 root.title("Dropdown Menu Example")
 root.geometry("400x300")
