@@ -217,7 +217,11 @@ class SoundFrame(BaseClass):
         
         # Sort by dropdown.
         sort_options = ["Title", "Length", "DateCreated"] 
-        sort_dropdown = OptionMenu(self, self.dropdown_item, *sort_options).grid(row=r+3, column=2)
+        sort_dropdown = OptionMenu(self, self.dropdown_item, *sort_options)
+        sort_dropdown.grid(row=r+3, column=2)
+        sort_dropdown.config(bg=self.default_button_color, fg="White")
+        sort_dropdown["menu"].config(bg="GREEN")
+
 
         # Go button for dropdown.
         ok_button = Button(self, text="Go", padx=30, pady=5, command=lambda: self.update_frame(SoundFrame, playlist_title, self.dropdown_item.get()), bg="green", fg="White")
