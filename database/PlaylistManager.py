@@ -47,9 +47,16 @@ class PlaylistManager:
                 if sort_name not in self.sort_type:
                     raise Exception(f"Invalid sorting name: {sort_name}")
 
-                self.connector.cursor.execute(
-                    f"SELECT * FROM soundlist ORDER BY {sort_name}"
+                query = (
+                    "SELECT spi.soundtitle "
+                    "FROM soundplaylistsinfo spi "
+                    "JOIN soundlist sl ON spi.soundtitle = sl.title "
+                    f"WHERE spi.playlisttitle = '{playlist_title}' "
+                    f"ORDER BY sl.{sort_name}"
                 )
+
+                self.connector.cursor.execute(query)
+                print("test2")
             else:
                 # Display all sounds in playlist_title.
                 query = (
@@ -68,8 +75,9 @@ class PlaylistManager:
         finally:
             # CLOSE CONNECTION.
             self.connector.close_connection()
-        
+
         return playlist_list
+
 
     def view_playlists(self):
         playlists = []
