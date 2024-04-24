@@ -10,7 +10,7 @@ from database.PlaylistManager import PlaylistManager
 class Backend:
     def __init__(self, audio_file):
         clustering = AudioClustering()
-        self.saturn = Saturn.getInstance()
+        self.saturn = Saturn.getInstance(sys.argv, len(sys.argv))
         playlistManager = PlaylistManager()
 
         # Delete all playlists that have 'cluster' in the name anywhere

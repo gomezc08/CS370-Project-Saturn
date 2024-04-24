@@ -86,7 +86,7 @@ class HomeFrame(BaseClass):
             fg="Black",
             bg=self.bg_color,
         ).pack(padx=50, pady=5)
-        self.saturn_img = ImageTk.PhotoImage(Image.open("./saturn.png"))
+        self.saturn_img = ImageTk.PhotoImage(Image.open("./src/saturn.png"))
         self.root_label = Label(self, image=self.saturn_img)
         self.root_label.pack(pady=20)
         self.root_btn = Button(
