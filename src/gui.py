@@ -6,6 +6,7 @@ sys.path.insert(0, parent_dir + "/Database")
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from database.PlaylistManager import PlaylistManager
 from src.saturn_cli import Saturn
+from src.gui_backend import Backend
 
 from tkinter import *
 from PIL import Image, ImageTk
@@ -428,6 +429,8 @@ class EditFrame(BaseClass):
         self.sound_title = sound_title
         self.active_color = "#FFD700"
         self.inactive_color = "#FFFACD"
+        
+        self.sound_features = Backend(self.sound_title)
 
         # [Sound] title
         Label(
@@ -577,7 +580,7 @@ class EditFrame(BaseClass):
 
         # save button.
         button_save = Button(
-            self, text="Save", fg="White", bg=self.default_button_color, padx=30, pady=5
+            self, text="Save", fg="White", bg=self.default_button_color, padx=30, pady=5, command=self.save_edited_audio
         )
         button_save.grid(row=7, column=2, sticky=E, pady=20)
 
@@ -592,6 +595,10 @@ class EditFrame(BaseClass):
             button["bg"] = self.active_color
         else:
             button["bg"] = self.inactive_color
+    
+    # TODO: go through each sound editing feature on the gui sequentially, add create/update changedAudioSegment each time and at the end of the for loop, we have the new changedAudioSegment
+    def save_edited_audio():
+        pass
 
 
 if __name__ == "__main__":
