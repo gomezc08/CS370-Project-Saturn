@@ -18,12 +18,14 @@ class Backend:
             if "cluster" in playlist:
                 playlistManager.delete_playlist(playlist)
 
+        """
         clusters = clustering.cluster_audio_files()
 
         for cluster_name in clusters.keys():
             playlistManager.create_playlist(cluster_name)
             for sound in clusters[cluster_name]:
                 playlistManager.add_sound_into_playlist(self, sound, cluster_name)
+        """
 
         self.audioSegment = None
         self.changedAudioSegment = None

@@ -321,7 +321,7 @@ class SoundFrame(BaseClass):
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
                 + "/sounds/"
                 + self.radio_item.get()
-                + ".mp3"
+                + ".wav"
             ),
             padx=50,
             pady=5,
@@ -430,7 +430,7 @@ class EditFrame(BaseClass):
         self.active_color = "#FFD700"
         self.inactive_color = "#FFFACD"
         
-        self.sound_features = Backend(self.sound_title)
+        self.sound_features = Backend(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/sounds/" + self.sound_title + ".wav")
 
         # [Sound] title
         Label(
