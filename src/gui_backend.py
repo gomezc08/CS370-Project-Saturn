@@ -1,6 +1,7 @@
 import sys
 import pydub.playback as p
 import pydub.audio_segment as AudioSegment
+import random as r
 
 sys.path.append("src")
 from src.ml import AudioClustering
@@ -9,7 +10,8 @@ from database.PlaylistManager import PlaylistManager
 
 class Backend:
     def __init__(self, audio_file):
-        clustering = AudioClustering()
+        # TODO: uncomment this when AudioClustering is fixed
+        # clustering = AudioClustering()
         playlistManager = PlaylistManager()
 
         # Delete all playlists that have 'cluster' in the name anywhere
@@ -32,6 +34,8 @@ class Backend:
         self.reversed = False
 
         self.load_audio(audio_file)
+
+        self.overlain = False
 
     def load_audio(self, audio_file):
         self.audioSegment = AudioSegment.from_file(audio_file)
@@ -66,12 +70,23 @@ class Backend:
     def save(self, name):
         self.changedAudioSegment.export(name, format="wav")
 
-    def overlap(self):
-        pass
+    def overlap(self, audio_file):
+        # This should work as well
+        self.changedAudioSegment.overlay(audio_file)
 
-    def concatentate(self):
-        pass
+    def concatentate(self, audio_file, crossfade_value):
+        # This should work, adapted straight from saturn
+        self.changedAudioSegment.append(audio_file, crossfade=crossfade_value)
 
-    def randomInsert(self):
-        # Need to have a check for the audio to be inserted is longer than select audio
-        pass
+    def randomInsert(self, audio_file):
+        length = len(self.changedAudioSegment)
+
+        # Get random time to insert
+        random_time = r.randint(0, length)
+
+        # Insert the audio file at the random time
+        tempAudioSegment = self.changedAudioSegment[:random_time]
+        tempAudioSegment.append(audio_file)
+        tempAudioSegment.append(self.changedAudioSegment[random_time:])
+
+        self.changedAudioSegment = tempAudioSegment
