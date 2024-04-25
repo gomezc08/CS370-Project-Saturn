@@ -39,19 +39,19 @@ class Backend:
 
     def modify_speed(self, change_amnt):
         # TODO: This likely won't work.
-        self.changedAudioSegment = self.audioSegment.speedup(playback_speed=change_amnt)
+        self.changedAudioSegment = self.changedAudioSegment.speedup(playback_speed=change_amnt)
 
     def modify_pitch(self, change_amnt):
         # TODO: This likely won't work.
-        self.changedAudioSegment = self.audioSegment.pitch_change(semitones=change_amnt)
+        self.changedAudioSegment = self.changedAudioSegment.pitch_change(semitones=change_amnt)
 
     def reverse(self):
         if self.reversed == False:
             self.reversed = True
-            self.changedAudioSegment = self.audioSegment.reverse()
+            self.changedAudioSegment = self.changedAudioSegment.reverse()
         if self.reversed == True:
             self.reversed = False
-            self.changedAudioSegment = self.audioSegment.reverse()
+            self.changedAudioSegment = self.changedAudioSegment.reverse()
 
     def revert(self):
         self.changedAudioSegment = self.audioSegment
