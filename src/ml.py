@@ -11,6 +11,45 @@ class AudioClustering:
         self.audio_dir = audio_dir
         self.sr = sr
         self.n_mfcc = n_mfcc
+        # TODO: find the audio formats that librosa can read
+        self.audioFormats = [
+            ".wav",
+            ".mp3",
+            ".ogg",
+            ".flac",
+            ".m4a",
+            ".wma",
+            ".aiff",
+            ".alac",
+            ".aac",
+            ".amr",
+            ".au",
+            ".awb",
+            ".dct",
+            ".dss",
+            ".dvf",
+            ".gsm",
+            ".iklax",
+            ".ivs",
+            ".m4p",
+            ".mmf",
+            ".mpc",
+            ".msv",
+            ".nmf",
+            ".nsf",
+            ".oga",
+            ".mogg",
+            ".opus",
+            ".ra",
+            ".rm",
+            ".raw",
+            ".sln",
+            ".tta",
+            ".vox",
+            ".wv",
+            ".webm",
+            ".8svx",
+        ]
 
     def extract_mfcc(self, audio_file):
         """
@@ -40,10 +79,12 @@ class AudioClustering:
         ]
 
         # Extract MFCC features for all audio files
+        # There is no reason for this to fail (since audioread depends on ffmpeg),
+        # but it does on ogg files.
         mfcc_features_list = [
             self.extract_mfcc(audio_file)
             for audio_file in audio_files
-            if not audio_file.endswith(".ogg")
+            if not audio_file.endswith(tuple(self.audioFormats))
         ]
 
         # Convert the list of features into a numpy array

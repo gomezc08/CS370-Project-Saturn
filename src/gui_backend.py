@@ -1,8 +1,8 @@
 import sys
 import pydub.playback as p
+import pydub.audio_segment as AudioSegment
 
 sys.path.append("src")
-from saturn_cli import Saturn
 from ml import AudioClustering
 from database.PlaylistManager import PlaylistManager
 
@@ -10,7 +10,6 @@ from database.PlaylistManager import PlaylistManager
 class Backend:
     def __init__(self, audio_file):
         clustering = AudioClustering()
-        self.saturn = Saturn.getInstance(sys.argv, len(sys.argv))
         playlistManager = PlaylistManager()
 
         # Delete all playlists that have 'cluster' in the name anywhere
@@ -35,7 +34,7 @@ class Backend:
         self.load_audio(audio_file)
 
     def load_audio(self, audio_file):
-        self.audioSegment = self.saturn.getSound(audio_file)
+        self.audioSegment = AudioSegment.from_file(audio_file)
         self.changedAudioSegment = self.audioSegment
 
     def modify_speed(self, change_amnt):
