@@ -3,8 +3,6 @@ import librosa
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.metrics import silhouette_score
-
 
 class AudioClustering:
     def __init__(self, audio_dir="sounds/", sr=22050, n_mfcc=13):
