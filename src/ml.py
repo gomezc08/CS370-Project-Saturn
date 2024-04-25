@@ -73,7 +73,7 @@ class AudioClustering:
     def cluster_audio_files(self, n_clusters=3, linkage="ward"):
         # List all audio files in the directory
         audio_files = [
-            os.path.join(self.audio_dir, file) for file in os.listdir(self.audio_dir)
+            os.path.join(self.audio_dir, file) for file in os.listdir(self.audio_dir) if file.endswith(tuple(self.audioFormats))
         ]
 
         # Extract MFCC features for all audio files
