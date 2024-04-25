@@ -437,8 +437,13 @@ class EditFrame(BaseClass):
         self.pitch_val = 1.00
         self.speed_label = Label(self, text=self.speed_val)
         self.pitch_label = Label(self, text=self.pitch_val)
-        
-        self.sound_features = Backend(os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/sounds/" + self.sound_title + ".wav")
+
+        self.sound_features = Backend(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            + "/sounds/"
+            + self.sound_title
+            + ".wav"
+        )
 
         # [Sound] title
         Label(
@@ -478,7 +483,7 @@ class EditFrame(BaseClass):
             bg=self.bg_color,
             font=("Courier New", 10),
         ).grid(row=6, column=0, padx=50, pady=15, sticky=W)
-        
+
         """
         def adjust_speed_label(isIncrease):
             if isIncrease and self.speed_val < 2.00:
@@ -495,10 +500,12 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.adjust_sound_attribute(True, self.speed_val, self.speed_label)
+            command=lambda: self.adjust_sound_attribute(
+                True, self.speed_val, self.speed_label
+            ),
         )
         speed_up_button.grid(row=1, column=1, sticky=W)
-        
+
         # speed down button.
         speed_down_button = Button(
             self,
@@ -507,7 +514,9 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.adjust_sound_attribute(False, self.speed_val, self.speed_label)
+            command=lambda: self.adjust_sound_attribute(
+                False, self.speed_val, self.speed_label
+            ),
         )
         speed_down_button.grid(row=1, column=2, sticky=W)
         # speed Label.
@@ -515,26 +524,30 @@ class EditFrame(BaseClass):
 
         # pitch up/down buttons.
         pitch_up_button = Button(
-            self, 
-            text="Up", 
-            fg="Black", 
-            bg=self.inactive_color, 
-            padx=10, 
+            self,
+            text="Up",
+            fg="Black",
+            bg=self.inactive_color,
+            padx=10,
             pady=5,
-            command=lambda: self.adjust_sound_attribute(True, self.pitch_val, self.pitch_label)
+            command=lambda: self.adjust_sound_attribute(
+                True, self.pitch_val, self.pitch_label
+            ),
         )
         pitch_up_button.grid(row=2, column=1, sticky=W)
         pitch_down_button = Button(
-            self, 
-            text="Down", 
-            fg="Black", 
-            bg=self.inactive_color, 
-            padx=10, 
+            self,
+            text="Down",
+            fg="Black",
+            bg=self.inactive_color,
+            padx=10,
             pady=5,
-            command=lambda: self.adjust_sound_attribute(False, self.pitch_val, self.pitch_label)
+            command=lambda: self.adjust_sound_attribute(
+                False, self.pitch_val, self.pitch_label
+            ),
         )
         pitch_down_button.grid(row=2, column=2, sticky=W)
-        
+
         # pitch Label.
         self.pitch_label.grid(row=2, column=3)
 
@@ -594,13 +607,25 @@ class EditFrame(BaseClass):
 
         # play button.
         button = Button(
-            self, text="Play", fg="White", bg=self.default_button_color, padx=30, pady=5, command=self.compile_edited_audio
+            self,
+            text="Play",
+            fg="White",
+            bg=self.default_button_color,
+            padx=30,
+            pady=5,
+            command=self.compile_edited_audio,
         )
         button.grid(row=7, column=1, sticky=W, pady=20)
 
         # save button.
         button_save = Button(
-            self, text="Save", fg="White", bg=self.default_button_color, padx=30, pady=5, command=self.save_edited_audio
+            self,
+            text="Save",
+            fg="White",
+            bg=self.default_button_color,
+            padx=30,
+            pady=5,
+            command=self.save_edited_audio,
         )
         button_save.grid(row=7, column=2, sticky=E, pady=20)
 
@@ -615,57 +640,57 @@ class EditFrame(BaseClass):
             button["bg"] = self.active_color
         else:
             button["bg"] = self.inactive_color
-    
-    def adjust_sound_attribute(self, is_increase, sound_attribute_val, label_attribute):  
-        temp_val = sound_attribute_val 
+
+    def adjust_sound_attribute(self, is_increase, sound_attribute_val, label_attribute):
+        temp_val = sound_attribute_val
         temp_label = label_attribute
         if is_increase and sound_attribute_val < 2.00:
             temp_val += 0.25
         elif not is_increase and sound_attribute_val > 0.00:
             temp_val -= 0.25
         temp_label.config(text="{:.2f}".format(sound_attribute_val))
-        
+
         setattr(self, sound_attribute_val, temp_val)
         setattr(self, label_attribute, temp_label)
-            
-    
+
     def compile_edited_audio(self):
         # speed.
-        #self.sound_features.modify_speed(self.speed_val)
-        
+        # self.sound_features.modify_speed(self.speed_val)
+
         # pitch.
-        #self.sound_features.modify_pitch(self.pitch_val)
-        
+        # self.sound_features.modify_pitch(self.pitch_val)
+
         # reverse.
-        #self.sound_features.reverse()
-        
+        # self.sound_features.reverse()
+
         # sequential.
-        #self.sound_features.concatentate()
-        
+        # self.sound_features.concatentate()
+
         # random insert.
-        #self.sound_features.randomInsert()
+        # self.sound_features.randomInsert()
         pass
-    
+
     def save_edited_audio(self):
         # speed.
-        #self.sound_features.modify_speed(self.speed_val)
-        
+        # self.sound_features.modify_speed(self.speed_val)
+
         # pitch.
-        #self.sound_features.modify_pitch(self.pitch_val)
-        
+        # self.sound_features.modify_pitch(self.pitch_val)
+
         # reverse.
-        #self.sound_features.reverse()
-        
+        # self.sound_features.reverse()
+
         # sequential.
-        #self.sound_features.concatentate()
-        
+        # self.sound_features.concatentate()
+
         # random insert.
-        #self.sound_features.randomInsert()
+        # self.sound_features.randomInsert()
         # save modified sound in Your Library and exit to homescreen.
         # TODO: will have a prompt/pop up on gui asking the user to name the new sound.
         self.new_sound = self.sound_features.changedAudioSegment
         # TODO: save the sound into sounds directory.
         self.db.add_sound_into_playlist("User input title", "Your Library")
+
 
 if __name__ == "__main__":
     app = HomeFrame()

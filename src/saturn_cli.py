@@ -1,11 +1,9 @@
 import sys
 import os
 import threading
-import simpleaudio as sa
 from pydub import AudioSegment
 from pydub.effects import speedup
 import pydub.playback as playback
-import pydub.effects as effects
 import librosa
 import soundfile as sf
 import pandas as pd
@@ -494,5 +492,3 @@ class CommandLineParser:
 if __name__ == "__main__":
     # create a command line parser and parse the command line arguments
     parser = CommandLineParser(sys.argv)
-    print("teststststs")
-    parser.saturn.play("../sounds/coffee.wav")

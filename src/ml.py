@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import AgglomerativeClustering
 
+
 class AudioClustering:
     def __init__(self, audio_dir="sounds/", sr=22050, n_mfcc=13):
         self.audio_dir = audio_dir
@@ -73,7 +74,9 @@ class AudioClustering:
     def cluster_audio_files(self, n_clusters=3, linkage="ward"):
         # List all audio files in the directory
         audio_files = [
-            os.path.join(self.audio_dir, file) for file in os.listdir(self.audio_dir) if file.endswith(tuple(self.audioFormats))
+            os.path.join(self.audio_dir, file)
+            for file in os.listdir(self.audio_dir)
+            if file.endswith(tuple(self.audioFormats))
         ]
 
         # Extract MFCC features for all audio files

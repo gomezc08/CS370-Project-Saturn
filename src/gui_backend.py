@@ -3,7 +3,7 @@ import pydub.playback as p
 import pydub.audio_segment as AudioSegment
 
 sys.path.append("src")
-from ml import AudioClustering
+from src.ml import AudioClustering
 from database.PlaylistManager import PlaylistManager
 
 
@@ -39,11 +39,15 @@ class Backend:
 
     def modify_speed(self, change_amnt):
         # TODO: This likely won't work.
-        self.changedAudioSegment = self.changedAudioSegment.speedup(playback_speed=change_amnt)
+        self.changedAudioSegment = self.changedAudioSegment.speedup(
+            playback_speed=change_amnt
+        )
 
     def modify_pitch(self, change_amnt):
         # TODO: This likely won't work.
-        self.changedAudioSegment = self.changedAudioSegment.pitch_change(semitones=change_amnt)
+        self.changedAudioSegment = self.changedAudioSegment.pitch_change(
+            semitones=change_amnt
+        )
 
     def reverse(self):
         if self.reversed == False:
