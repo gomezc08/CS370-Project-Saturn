@@ -1,7 +1,6 @@
 import sys
 import pydub.playback as p
-from pydub import AudioSegment
-
+import pydub.audio_segment as AudioSegment
 import random as r
 
 sys.path.append("src")
@@ -36,25 +35,26 @@ class Backend:
 
         self.load_audio(audio_file)
 
-        self.overlain = False
-
     def load_audio(self, audio_file):
         self.audioSegment = AudioSegment.from_file(audio_file)
         self.changedAudioSegment = self.audioSegment
 
     def modify_speed(self, change_amnt):
-        # TODO: This likely won't work.
+        # This should work ?
         self.changedAudioSegment = self.changedAudioSegment.speedup(
             playback_speed=change_amnt
         )
 
     def modify_pitch(self, change_amnt):
-        # TODO: This likely won't work.
-        self.changedAudioSegment = self.changedAudioSegment.pitch_change(
-            semitones=change_amnt
+        # This should work ?
+        self.changedAudioSegment = self.changedAudioSegment.set_frame_rate(
+            self.changedAudioSegment.frame_rate * change_amnt
         )
 
     def reverse(self):
+        """
+        Toggles the reversed attribute and reverses the audio segment.
+        """
         if self.reversed == False:
             self.reversed = True
             self.changedAudioSegment = self.changedAudioSegment.reverse()
@@ -72,7 +72,6 @@ class Backend:
         self.changedAudioSegment.export(name, format="wav")
 
     def overlap(self, audio_file):
-        # This should work as well
         self.changedAudioSegment.overlay(audio_file)
 
     def concatentate(self, audio_file, crossfade_value):
