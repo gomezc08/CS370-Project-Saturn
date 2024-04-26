@@ -661,36 +661,36 @@ class EditFrame(BaseClass):
 
     def compile_edited_audio(self):
         # speed.
-        # self.sound_features.modify_speed(self.speed_val)
+        self.sound_features.modify_speed(self.speed_val)
 
         # pitch.
-        # self.sound_features.modify_pitch(self.pitch_val)
+        self.sound_features.modify_pitch(self.pitch_val)
 
         # reverse.
-        # self.sound_features.reverse()
+        self.sound_features.reverse()
 
         # sequential.
-        # self.sound_features.concatentate()
+        self.sound_features.concatentate()
 
         # random insert.
-        # self.sound_features.randomInsert()
+        self.sound_features.randomInsert()
         pass
 
     def save_edited_audio(self):
         # speed.
-        # self.sound_features.modify_speed(self.speed_val)
+        self.sound_features.modify_speed(self.speed_val)
 
         # pitch.
-        # self.sound_features.modify_pitch(self.pitch_val)
+        self.sound_features.modify_pitch(self.pitch_val)
 
         # reverse.
-        # self.sound_features.reverse()
+        self.sound_features.reverse()
 
         # sequential.
-        # self.sound_features.concatentate()
+        self.sound_features.concatentate()
 
         # random insert.
-        # self.sound_features.randomInsert()
+        self.sound_features.randomInsert()
         # save modified sound in Your Library and exit to homescreen.
         # TODO: will have a prompt/pop up on gui asking the user to name the new sound.
         self.new_sound = self.sound_features.changedAudioSegment
