@@ -5,7 +5,7 @@ from pydub import AudioSegment
 import random as r
 
 sys.path.append("src")
-from src.ml import AudioClustering
+from ml import AudioClustering
 from database.PlaylistManager import PlaylistManager
 
 
