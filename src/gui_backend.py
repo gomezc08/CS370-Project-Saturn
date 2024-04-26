@@ -1,6 +1,7 @@
 import sys
 import pydub.playback as p
-import pydub.audio_segment as AudioSegment
+from pydub import AudioSegment
+
 import random as r
 
 sys.path.append("src")

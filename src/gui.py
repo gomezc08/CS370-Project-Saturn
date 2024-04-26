@@ -501,7 +501,7 @@ class EditFrame(BaseClass):
             padx=10,
             pady=5,
             command=lambda: self.adjust_sound_attribute(
-                True, self.speed_val, self.speed_label
+                True, "speed_val", "speed_label"
             ),
         )
         speed_up_button.grid(row=1, column=1, sticky=W)
@@ -515,7 +515,7 @@ class EditFrame(BaseClass):
             padx=10,
             pady=5,
             command=lambda: self.adjust_sound_attribute(
-                False, self.speed_val, self.speed_label
+                False, "speed_val", "speed_label"
             ),
         )
         speed_down_button.grid(row=1, column=2, sticky=W)
@@ -531,7 +531,7 @@ class EditFrame(BaseClass):
             padx=10,
             pady=5,
             command=lambda: self.adjust_sound_attribute(
-                True, self.pitch_val, self.pitch_label
+                True, "pitch_val", "pitch_label"
             ),
         )
         pitch_up_button.grid(row=2, column=1, sticky=W)
@@ -543,7 +543,7 @@ class EditFrame(BaseClass):
             padx=10,
             pady=5,
             command=lambda: self.adjust_sound_attribute(
-                False, self.pitch_val, self.pitch_label
+                False, "pitch_val", "pitch_label"
             ),
         )
         pitch_down_button.grid(row=2, column=2, sticky=W)
@@ -640,18 +640,24 @@ class EditFrame(BaseClass):
             button["bg"] = self.active_color
         else:
             button["bg"] = self.inactive_color
-
+    
     def adjust_sound_attribute(self, is_increase, sound_attribute_val, label_attribute):
-        temp_val = sound_attribute_val
-        temp_label = label_attribute
-        if is_increase and sound_attribute_val < 2.00:
-            temp_val += 0.25
-        elif not is_increase and sound_attribute_val > 0.00:
-            temp_val -= 0.25
-        temp_label.config(text="{:.2f}".format(sound_attribute_val))
+        sound_val = getattr(self, sound_attribute_val)
+        label_val = getattr(self, label_attribute)
 
+        # Adjust the sound value
+        temp_val = sound_val
+        if is_increase and sound_val < 2.00:
+            temp_val += 0.25
+        elif not is_increase and sound_val > 0.00:
+            temp_val -= 0.25
+
+        # Update the label text
+        label_val.config(text="{:.2f}".format(temp_val))
+
+        # Update the attribute value
         setattr(self, sound_attribute_val, temp_val)
-        setattr(self, label_attribute, temp_label)
+        
 
     def compile_edited_audio(self):
         # speed.
@@ -690,6 +696,7 @@ class EditFrame(BaseClass):
         self.new_sound = self.sound_features.changedAudioSegment
         # TODO: save the sound into sounds directory.
         self.db.add_sound_into_playlist("User input title", "Your Library")
+        self.sound_features.save(self.new_sound)
 
 
 if __name__ == "__main__":
