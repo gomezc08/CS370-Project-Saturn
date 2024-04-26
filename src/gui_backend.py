@@ -25,23 +25,8 @@ class Backend:
         Args:
             audio_file (str): Path to the audio file.
         """
-        # TODO: uncomment this when AudioClustering is fixed
-        # clustering = AudioClustering()
-        playlistManager = PlaylistManager()
 
-        # Delete all playlists that have 'cluster' in the name anywhere
-        for playlist in playlistManager.view_playlists():
-            if "cluster" in playlist:
-                playlistManager.delete_playlist(playlist)
-
-        """
-        clusters = clustering.cluster_audio_files()
-
-        for cluster_name in clusters.keys():
-            playlistManager.create_playlist(cluster_name)
-            for sound in clusters[cluster_name]:
-                playlistManager.add_sound_into_playlist(self, sound, cluster_name)
-        """
+        self.auto_cluster_audio_files()
 
         self.audioSegment = None
         self.changedAudioSegment = None
@@ -49,6 +34,32 @@ class Backend:
         self.reversed = False
 
         self.load_audio(audio_file)
+
+    def auto_cluster_audio_files(self):
+        """
+        Automatically clusters audio files and creates playlists based on the clusters.
+        Deletes any existing playlists with 'cluster' in the name.
+        """
+        # TODO: uncomment this when AudioClustering is fixed
+        clustering = AudioClustering()
+        playlistManager = PlaylistManager()
+
+        # Delete all playlists that have 'cluster' in the name anywhere
+        for playlist in playlistManager.view_playlists():
+            if "cluster" in playlist:
+                playlistManager.delete_playlist(playlist)
+
+        epsilon = clustering.get_optimal_epsilon()
+
+        # call this with different min_samples values when we have more audio files
+        clusters = clustering.cluster_audio_files(eps=epsilon)
+
+        for cluster_name in clusters.keys():
+            playlist_cluster_name = "cluster_" + str(cluster_name)
+            playlistManager.create_playlist(playlist_cluster_name)
+            for sound in clusters[cluster_name]:
+                playlistManager.add_sound_into_playlist(self, sound, playlist_cluster_name)
+
 
     def load_audio(self, audio_file):
         """
