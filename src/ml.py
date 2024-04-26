@@ -2,7 +2,9 @@ import os
 import librosa
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import DBSCAN
+from sklearn.neighbors import NearestNeighbors
+from kneed import KneeLocator
 
 
 class AudioClustering:
@@ -10,7 +12,7 @@ class AudioClustering:
         self.audio_dir = audio_dir
         self.sr = sr
         self.n_mfcc = n_mfcc
-        # TODO: find the audio formats that librosa can read
+        # Supported audio formats by librosa
         self.audioFormats = [
             ".wav",
             ".mp3",
@@ -71,7 +73,7 @@ class AudioClustering:
 
         return mfcc_features
 
-    def cluster_audio_files(self, n_clusters=3, linkage="ward"):
+    def get_optimal_epsilon(self, min_pts=5):
         # List all audio files in the directory
         audio_files = [
             os.path.join(self.audio_dir, file)
@@ -80,12 +82,47 @@ class AudioClustering:
         ]
 
         # Extract MFCC features for all audio files
-        # There is no reason for this to fail (since audioread depends on ffmpeg),
-        # but it does on ogg files.
         mfcc_features_list = [
-            self.extract_mfcc(audio_file)
-            for audio_file in audio_files
-            if not audio_file.endswith(tuple(self.audioFormats))
+            self.extract_mfcc(audio_file) for audio_file in audio_files
+        ]
+
+        # Convert the list of features into a numpy array
+        X = np.array(mfcc_features_list)
+
+        # Preprocessing: Scale the features
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+
+        # Compute the k-distance graph
+        nbrs = NearestNeighbors(n_neighbors=min_pts).fit(X_scaled)
+        distances, indices = nbrs.kneighbors(X_scaled)
+
+        # Sort distances and plot the graph
+        distances = np.sort(distances, axis=0)
+        distances = distances[
+            :, 1
+        ]  # consider only the distances to the second nearest neighbor
+
+        # Plot the graph to find the knee point
+        kneedle = KneeLocator(
+            np.arange(len(distances)), distances, curve="convex", direction="increasing"
+        )
+        optimal_epsilon_index = kneedle.elbow
+        optimal_epsilon = distances[optimal_epsilon_index]
+
+        return optimal_epsilon
+
+    def cluster_audio_files(self, eps=0.5, min_samples=2):
+        # List all audio files in the directory
+        audio_files = [
+            os.path.join(self.audio_dir, file)
+            for file in os.listdir(self.audio_dir)
+            if file.endswith(tuple(self.audioFormats))
+        ]
+
+        # Extract MFCC features for all audio files
+        mfcc_features_list = [
+            self.extract_mfcc(audio_file) for audio_file in audio_files
         ]
 
         # Convert the list of features into a numpy array
@@ -96,11 +133,9 @@ class AudioClustering:
         X_scaled = scaler.fit_transform(X)
 
         # Clustering
-        # Using hierarchical clustering
-        agg_clustering = AgglomerativeClustering(
-            n_clusters=n_clusters, linkage=linkage
-        )  # You can adjust the number of clusters and linkage method
-        cluster_labels = agg_clustering.fit_predict(X_scaled)
+        # Using DBSCAN
+        dbscan = DBSCAN(eps=eps, min_samples=min_samples)
+        cluster_labels = dbscan.fit_predict(X_scaled)
 
         # Group audio files based on cluster labels
         clusters = {}
@@ -111,15 +146,12 @@ class AudioClustering:
             else:
                 clusters[label].append(filename)
 
-        # Get audio files that did not get clustered
-        unclustered_files = [
-            audio_files[i] for i, label in enumerate(cluster_labels) if label == -1
-        ]
-
-        # Create a new cluster for unclustered files
-        if unclustered_files:
-            clusters["unclustered"] = [
-                os.path.basename(file) for file in unclustered_files
-            ]
-
         return clusters
+
+
+# Testing the AudioClustering class
+if __name__ == "__main__":
+    clustering = AudioClustering()
+    epsilon = clustering.get_optimal_epsilon()
+    clusters = clustering.cluster_audio_files(eps=epsilon)
+    print(clusters)
