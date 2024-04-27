@@ -18,7 +18,7 @@ class Backend:
         reversed (bool): Flag indicating if the audio is reversed.
     """
 
-    def __init__(self, audio_file):
+    def __init__(self):
         """
         Initializes the Backend with the given audio file.
 
@@ -26,14 +26,10 @@ class Backend:
             audio_file (str): Path to the audio file.
         """
 
-        self.auto_cluster_audio_files()
-
         self.audioSegment = None
         self.changedAudioSegment = None
 
         self.reversed = False
-
-        self.load_audio(audio_file)
 
     def auto_cluster_audio_files(self):
         """

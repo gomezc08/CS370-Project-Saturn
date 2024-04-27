@@ -640,7 +640,7 @@ class EditFrame(BaseClass):
             button["bg"] = self.active_color
         else:
             button["bg"] = self.inactive_color
-    
+
     def adjust_sound_attribute(self, is_increase, sound_attribute_val, label_attribute):
         sound_val = getattr(self, sound_attribute_val)
         label_val = getattr(self, label_attribute)
@@ -657,7 +657,6 @@ class EditFrame(BaseClass):
 
         # Update the attribute value
         setattr(self, sound_attribute_val, temp_val)
-        
 
     def compile_edited_audio(self):
         # speed.
