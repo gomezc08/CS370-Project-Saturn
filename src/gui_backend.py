@@ -108,6 +108,8 @@ class Backend:
         Reverts the audio to its original state.
         """
         self.changedAudioSegment = self.audioSegment
+        if self.reversed == True:
+            self.reversed = False
 
     def play(self):
         """
