@@ -44,6 +44,9 @@ class BaseClass(Tk):
 
         self.db = PlaylistManager()
         self.saturn = Saturn(sys.argv, len(sys.argv))
+        self.sound_features = Backend()
+        
+        self.sound_features.auto_cluster_audio_files()
 
     def change_frame(self, change_frame, sound_argument=None):
         self.destroy()
@@ -438,12 +441,6 @@ class EditFrame(BaseClass):
         self.speed_label = Label(self, text=self.speed_val)
         self.pitch_label = Label(self, text=self.pitch_val)
 
-        self.sound_features = Backend(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            + "/sounds/"
-            + self.sound_title
-            + ".wav"
-        )
 
         # [Sound] title
         Label(
@@ -640,7 +637,7 @@ class EditFrame(BaseClass):
             button["bg"] = self.active_color
         else:
             button["bg"] = self.inactive_color
-
+    
     def adjust_sound_attribute(self, is_increase, sound_attribute_val, label_attribute):
         sound_val = getattr(self, sound_attribute_val)
         label_val = getattr(self, label_attribute)
@@ -657,6 +654,7 @@ class EditFrame(BaseClass):
 
         # Update the attribute value
         setattr(self, sound_attribute_val, temp_val)
+        
 
     def compile_edited_audio(self):
         # speed.
