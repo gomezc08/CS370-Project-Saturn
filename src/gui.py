@@ -13,6 +13,7 @@ from tkinter import *
 from PIL import Image, ImageTk
 import sys, os
 
+backend_loaded = False
 
 class BaseClass(Tk):
     """
@@ -40,9 +41,13 @@ class BaseClass(Tk):
         self.bg_color = "#ead6b8"
         self.radio_item = StringVar(value="Small")
         self.sound_item = None
-
+        
         self.db = PlaylistManager()
-        self.sound_features = Backend.getInstance()
+        
+        global backend_loaded
+        if not backend_loaded :
+            self.sound_features = Backend.getInstance()
+            backend_loaded = True
         
         self.sound_features.auto_cluster_audio_files()
 
