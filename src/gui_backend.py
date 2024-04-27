@@ -54,7 +54,8 @@ class Backend:
             playlist_cluster_name = "cluster_" + str(cluster_name)
             playlistManager.create_playlist(playlist_cluster_name)
             for sound in clusters[cluster_name]:
-                playlistManager.add_sound_into_playlist(sound, playlist_cluster_name)
+                sound_name = sound.split(".")[0]
+                playlistManager.add_sound_into_playlist(sound_name, playlist_cluster_name)
 
 
     def load_audio(self, audio_file):
@@ -113,6 +114,15 @@ class Backend:
         Plays the modified audio.
         """
         p.play(self.changedAudioSegment)
+    
+    def play(self, audio_file):
+        """
+        Plays the audio file.
+
+        Args:
+            audio_file (AudioSegment): Audio segment to play.
+        """
+        p.play(audio_file)
 
     def save(self, name):
         """
