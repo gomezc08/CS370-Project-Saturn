@@ -54,7 +54,7 @@ class Backend:
             playlist_cluster_name = "cluster_" + str(cluster_name)
             playlistManager.create_playlist(playlist_cluster_name)
             for sound in clusters[cluster_name]:
-                playlistManager.add_sound_into_playlist(self, sound, playlist_cluster_name)
+                playlistManager.add_sound_into_playlist(sound, playlist_cluster_name)
 
 
     def load_audio(self, audio_file):
