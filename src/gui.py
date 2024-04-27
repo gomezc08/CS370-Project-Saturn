@@ -7,7 +7,6 @@ sys.path.insert(0, parent_dir + "/Database")
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from database.PlaylistManager import PlaylistManager
-from src.saturn_cli import Saturn
 from src.gui_backend import Backend
 
 from tkinter import *
@@ -43,8 +42,7 @@ class BaseClass(Tk):
         self.sound_item = None
 
         self.db = PlaylistManager()
-        self.saturn = Saturn(sys.argv, len(sys.argv))
-        self.sound_features = Backend()
+        self.sound_features = Backend.getInstance()
         
         self.sound_features.auto_cluster_audio_files()
 
@@ -322,11 +320,11 @@ class SoundFrame(BaseClass):
         play_btn = Button(
             self,
             text="Play",
-            command=lambda: self.saturn.play(
+            command=lambda: self.sound_features.play_audio_file(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
                 + "/sounds/"
                 + self.radio_item.get()
-                + ".wav"
+                + ".mp3"
             ),
             padx=50,
             pady=5,

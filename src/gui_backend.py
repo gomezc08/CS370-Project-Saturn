@@ -31,6 +31,15 @@ class Backend:
 
         self.reversed = False
 
+    def getInstance():
+        """
+        if an instance of already exists, return it
+        otherwise, create a new instance
+        """
+        if not hasattr(Backend, "_instance"):
+            Backend._instance = Backend()
+        return Backend._instance
+
     def auto_cluster_audio_files(self):
         """
         Automatically clusters audio files and creates playlists based on the clusters.
@@ -111,13 +120,13 @@ class Backend:
         if self.reversed == True:
             self.reversed = False
 
-    def play(self):
+    def play_modified_audio(self):
         """
         Plays the modified audio.
         """
         p.play(self.changedAudioSegment)
     
-    def play(self, audio_file):
+    def play_audio_file(self, audio_file):
         """
         Plays the audio file.
 
