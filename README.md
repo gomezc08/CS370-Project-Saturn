@@ -26,10 +26,11 @@
 - [x] tests!!!!
 - [x] comments (new and update big block comment under class name)
 - [ ] update documetation.md with new functions
-- [ ] gui backend object
-- [ ] convert to mp3
-- [ ] saving and playing in the edit frame
+- [x] gui backend object
+- [x] convert to mp3
+- [x] saving and playing in the edit frame
 - [ ] testing clustering with larger sound files.
+- [ ] Fix deleting playlists
 
 **DONE:**
 
