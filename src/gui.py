@@ -13,7 +13,7 @@ from tkinter import *
 from PIL import Image, ImageTk
 import sys, os
 
-backend_loaded = False
+clustered = False
 
 class BaseClass(Tk):
     """
@@ -44,14 +44,10 @@ class BaseClass(Tk):
         
         self.db = PlaylistManager()
         
-        """
-        global backend_loaded
-        if not backend_loaded :
-            self.sound_features = Backend.getInstance()
-            backend_loaded = True
-        
-        self.sound_features.auto_cluster_audio_files()
-        """
+        if clustered == False:
+            Backend.auto_cluster_audio_files()
+            global clustered
+            clustered = True
 
     def change_frame(self, change_frame, sound_argument=None):
         self.destroy()
@@ -327,7 +323,7 @@ class SoundFrame(BaseClass):
         play_btn = Button(
             self,
             text="Play",
-            command=lambda: self.sound_features.play_audio_file(
+            command=lambda: self.Backend.play_audio_file(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
                 + "/sounds/"
                 + self.radio_item.get()
@@ -661,42 +657,42 @@ class EditFrame(BaseClass):
 
     def compile_edited_audio(self):
         # speed.
-        self.sound_features.modify_speed(self.speed_val)
+        self.Backend.modify_speed(self.speed_val)
 
         # pitch.
-        self.sound_features.modify_pitch(self.pitch_val)
+        self.Backend.modify_pitch(self.pitch_val)
 
         # reverse.
-        self.sound_features.reverse()
+        self.Backend.reverse()
 
         # sequential.
-        self.sound_features.concatentate()
+        self.Backend.concatentate()
 
         # random insert.
-        self.sound_features.randomInsert()
+        self.Backend.randomInsert()
         pass
 
     def save_edited_audio(self):
         # speed.
-        self.sound_features.modify_speed(self.speed_val)
+        self.Backend.modify_speed(self.speed_val)
 
         # pitch.
-        self.sound_features.modify_pitch(self.pitch_val)
+        self.Backend.modify_pitch(self.pitch_val)
 
         # reverse.
-        self.sound_features.reverse()
+        self.Backend.reverse()
 
         # sequential.
-        self.sound_features.concatentate()
+        self.Backend.concatentate()
 
         # random insert.
-        self.sound_features.randomInsert()
+        self.Backend.randomInsert()
         # save modified sound in Your Library and exit to homescreen.
         # TODO: will have a prompt/pop up on gui asking the user to name the new sound.
-        self.new_sound = self.sound_features.changedAudioSegment
+        self.new_sound = self.Backend.changedAudioSegment
         # TODO: save the sound into sounds directory.
         self.db.add_sound_into_playlist("User input title", "Your Library")
-        self.sound_features.save(self.new_sound)
+        self.Backend.save(self.new_sound)
 
 
 if __name__ == "__main__":
