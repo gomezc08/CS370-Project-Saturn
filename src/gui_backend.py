@@ -1,6 +1,6 @@
 import sys
 import pydub.playback as p
-import pydub.audio_segment as AudioSegment
+from pydub import AudioSegment
 import random as r
 
 sys.path.append("src")
@@ -129,8 +129,8 @@ class Backend:
         p.play(self.changedAudioSegment)
 
     def play_audio_file(audio_file):
-        
-        p.play(AudioSegment.from_file(audio_file))
+        sound = AudioSegment.from_file(audio_file, format=audio_file.split(".")[-1])
+        p.play(sound)
 
     def save(self, name):
         """
