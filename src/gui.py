@@ -44,12 +44,14 @@ class BaseClass(Tk):
         
         self.db = PlaylistManager()
         
+        """
         global backend_loaded
         if not backend_loaded :
             self.sound_features = Backend.getInstance()
             backend_loaded = True
         
         self.sound_features.auto_cluster_audio_files()
+        """
 
     def change_frame(self, change_frame, sound_argument=None):
         self.destroy()
