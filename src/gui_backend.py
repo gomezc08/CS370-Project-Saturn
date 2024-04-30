@@ -189,7 +189,7 @@ class Backend:
             self.modify_speed(speed_val)
         
         if pitch_val != 1:
-            self.modify_pitch()
+            self.modify_pitch(pitch_val)
         
         if not reverse:
             self.reverse()
