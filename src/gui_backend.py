@@ -18,6 +18,10 @@ class Backend:
         reversed (bool): Flag indicating if the audio is reversed.
     """
 
+    audioSegment = None
+    hangedAudioSegment = None
+
+
     def __init__(self):
         """
         Initializes the Backend with the given audio file.
@@ -25,9 +29,6 @@ class Backend:
         Args:
             audio_file (str): Path to the audio file.
         """
-
-        self.audioSegment = None
-        self.changedAudioSegment = None
 
         self.reversed = False
 
@@ -40,7 +41,7 @@ class Backend:
             Backend._instance = Backend()
         return Backend._instance
 
-    def auto_cluster_audio_files(self):
+    def auto_cluster_audio_files():
         """
         Automatically clusters audio files and creates playlists based on the clusters.
         Deletes any existing playlists with 'cluster' in the name.
@@ -127,14 +128,9 @@ class Backend:
         """
         p.play(self.changedAudioSegment)
 
-    def play_audio_file(self, audio_file):
-        """
-        Plays the audio file.
-
-        Args:
-            audio_file (AudioSegment): Audio segment to play.
-        """
-        p.play(audio_file)
+    def play_audio_file(audio_file):
+        
+        p.play(AudioSegment.from_file(audio_file))
 
     def save(self, name):
         """
