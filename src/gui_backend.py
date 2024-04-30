@@ -179,3 +179,26 @@ class Backend:
         tempAudioSegment.append(self.changedAudioSegment[random_time:])
 
         self.changedAudioSegment = tempAudioSegment
+
+    def compile_audio(self, speed_val = 1, pitch_val = 1, reverse = False, overlap = None, concate = None, randInsert = None):
+        # load file.
+        self.load_audio()
+        
+        # go through and edit em.
+        if speed_val != 1:
+            self.modify_speed(speed_val)
+        
+        if pitch_val != 1:
+            self.modify_pitch()
+        
+        if not reverse:
+            self.reverse()
+        
+        if overlap != None:  
+            self.overlap(overlap)
+        
+        if concate != None:  
+            self.concatentate(concate)
+                
+        if randInsert != None:
+            self.randomInsert(randInsert)
