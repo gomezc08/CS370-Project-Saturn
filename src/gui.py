@@ -44,9 +44,10 @@ class BaseClass(Tk):
         
         self.db = PlaylistManager()
         
+        
+        global clustered
         if clustered == False:
             Backend.auto_cluster_audio_files()
-            global clustered
             clustered = True
 
     def change_frame(self, change_frame, sound_argument=None):
@@ -323,7 +324,7 @@ class SoundFrame(BaseClass):
         play_btn = Button(
             self,
             text="Play",
-            command=lambda: self.Backend.play_audio_file(
+            command=lambda: Backend.play_audio_file(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
                 + "/sounds/"
                 + self.radio_item.get()
@@ -657,42 +658,42 @@ class EditFrame(BaseClass):
 
     def compile_edited_audio(self):
         # speed.
-        self.Backend.modify_speed(self.speed_val)
+        Backend.modify_speed(self.speed_val)
 
         # pitch.
-        self.Backend.modify_pitch(self.pitch_val)
+        Backend.modify_pitch(self.pitch_val)
 
         # reverse.
-        self.Backend.reverse()
+        Backend.reverse()
 
         # sequential.
-        self.Backend.concatentate()
+        Backend.concatentate()
 
         # random insert.
-        self.Backend.randomInsert()
+        Backend.randomInsert()
         pass
 
     def save_edited_audio(self):
         # speed.
-        self.Backend.modify_speed(self.speed_val)
+        Backend.modify_speed(self.speed_val)
 
         # pitch.
-        self.Backend.modify_pitch(self.pitch_val)
+        Backend.modify_pitch(self.pitch_val)
 
         # reverse.
-        self.Backend.reverse()
+        Backend.reverse()
 
         # sequential.
-        self.Backend.concatentate()
+        Backend.concatentate()
 
         # random insert.
-        self.Backend.randomInsert()
+        Backend.randomInsert()
         # save modified sound in Your Library and exit to homescreen.
         # TODO: will have a prompt/pop up on gui asking the user to name the new sound.
-        self.new_sound = self.Backend.changedAudioSegment
+        self.new_sound = Backend.changedAudioSegment
         # TODO: save the sound into sounds directory.
         self.db.add_sound_into_playlist("User input title", "Your Library")
-        self.Backend.save(self.new_sound)
+        Backend.save(self.new_sound)
 
 
 if __name__ == "__main__":
