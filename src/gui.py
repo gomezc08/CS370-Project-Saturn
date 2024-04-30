@@ -443,6 +443,10 @@ class EditFrame(BaseClass):
         self.pitch_val = 1.00
         self.speed_label = Label(self, text=self.speed_val)
         self.pitch_label = Label(self, text=self.pitch_val)
+        self.isReversed = True
+        self.isOverlap = True
+        self.isConcate = True
+        self.isRandomInsert = True
 
         # [Sound] title
         Label(
@@ -558,7 +562,7 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.toggle_btn_click(reverse_button),
+            command=lambda: self.toggle_btn_click(reverse_button, "isReversed"),
         )
         reverse_button.grid(row=3, column=1, columnspan=5, sticky=W)
 
@@ -570,7 +574,7 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.toggle_btn_click(overlap_button),
+            command=lambda: self.toggle_btn_click(overlap_button, "isOverlap"),
         )
         overlap_button.grid(row=4, column=1, sticky=W)
         overlap_entry = Entry(self, width=30)
@@ -584,7 +588,7 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.toggle_btn_click(seq_button),
+            command=lambda: self.toggle_btn_click(seq_button, "isConcate"),
         )
         seq_button.grid(row=5, column=1, sticky=W)
         seq_entry = Entry(self, width=30)
@@ -598,8 +602,9 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.toggle_btn_click(rand_button),
+            command=lambda: self.toggle_btn_click(rand_button, "isRandomInsert"),
         )
+
         rand_button.grid(row=6, column=1, sticky=W)
         rand_entry = Entry(self, width=30)
         rand_entry.grid(row=6, column=2)
@@ -634,11 +639,17 @@ class EditFrame(BaseClass):
         )
         back_button.grid(pady=90, padx=30, row=8, column=0, sticky=W)
 
-    def toggle_btn_click(self, button):
+    def toggle_btn_click(self, button, state):
+        state_val = getattr(self, state)
+        print(f"here is the state: {state_val}")
         if button["bg"] == self.inactive_color:
             button["bg"] = self.active_color
+            
         else:
             button["bg"] = self.inactive_color
+        
+        state_val = not state_val
+        setattr(self, state, state_val)
 
     def adjust_sound_attribute(self, is_increase, sound_attribute_val, label_attribute):
         sound_val = getattr(self, sound_attribute_val)
@@ -658,43 +669,14 @@ class EditFrame(BaseClass):
         setattr(self, sound_attribute_val, temp_val)
 
     def compile_edited_audio(self):
-        # speed.
-        Backend.modify_speed(self.speed_val)
-
-        # pitch.
-        Backend.modify_pitch(self.pitch_val)
-
-        # reverse.
-        Backend.reverse()
-
-        # sequential.
-        Backend.concatentate()
-
-        # random insert.
-        Backend.randomInsert()
+        # compile
+        # play
         pass
 
     def save_edited_audio(self):
-        # speed.
-        Backend.modify_speed(self.speed_val)
-
-        # pitch.
-        Backend.modify_pitch(self.pitch_val)
-
-        # reverse.
-        Backend.reverse()
-
-        # sequential.
-        Backend.concatentate()
-
-        # random insert.
-        Backend.randomInsert()
-        # save modified sound in Your Library and exit to homescreen.
-        # TODO: will have a prompt/pop up on gui asking the user to name the new sound.
-        self.new_sound = Backend.changedAudioSegment
-        # TODO: save the sound into sounds directory.
-        self.db.add_sound_into_playlist("User input title", "Your Library")
-        Backend.save(self.new_sound)
+        # compile
+        # save
+        pass
 
 
 if __name__ == "__main__":
