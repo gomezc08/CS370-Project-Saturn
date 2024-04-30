@@ -1,7 +1,7 @@
-import wave
 import os
 from datetime import datetime
 import mysql.connector
+import pydub
 
 
 class DBConnector:
@@ -107,10 +107,7 @@ class DBConnector:
                 else:
                     try:
                         # Get the length of the .wav file
-                        with wave.open(file_path, "r") as wav_file:
-                            frames = wav_file.getnframes()
-                            rate = wav_file.getframerate()
-                            duration = frames / float(rate)  # Duration in seconds
+                        duration = pydub.AudioSegment.from_file(file_path).duration_seconds
                     except Exception as e:
                         print(f"Error processing {filename}: {e}")
                         continue
