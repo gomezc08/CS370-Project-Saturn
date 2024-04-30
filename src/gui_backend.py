@@ -18,9 +18,6 @@ class Backend:
         reversed (bool): Flag indicating if the audio is reversed.
     """
 
-    audioSegment = None
-    hangedAudioSegment = None
-
 
     def __init__(self):
         """
@@ -31,6 +28,8 @@ class Backend:
         """
 
         self.reversed = False
+        self.audioSegment = None
+        self.changedAudioSegment = None
 
     def getInstance():
         """
@@ -99,6 +98,7 @@ class Backend:
             change_amnt (float): Amount of pitch change.
         """
         # This should work ?
+        change_amnt = int(change_amnt)
         self.changedAudioSegment = self.changedAudioSegment.set_frame_rate(
             self.changedAudioSegment.frame_rate * change_amnt
         )
@@ -109,10 +109,10 @@ class Backend:
         """
         if self.reversed == False:
             self.reversed = True
-            self.changedAudioSegment = self.changedAudioSegment.reverse()
         if self.reversed == True:
             self.reversed = False
-            self.changedAudioSegment = self.changedAudioSegment.reverse()
+
+        self.changedAudioSegment = self.changedAudioSegment.reverse()
 
     def revert(self):
         """

@@ -443,10 +443,10 @@ class EditFrame(BaseClass):
         self.pitch_val = 1.00
         self.speed_label = Label(self, text=self.speed_val)
         self.pitch_label = Label(self, text=self.pitch_val)
-        self.isReversed = True
-        self.isOverlap = True
-        self.isConcate = True
-        self.isRandomInsert = True
+        self.isReversed = False
+        self.isOverlap = False
+        self.isConcate = False
+        self.isRandomInsert = False
 
         # [Sound] title
         Label(
@@ -669,14 +669,30 @@ class EditFrame(BaseClass):
         setattr(self, sound_attribute_val, temp_val)
 
     def compile_edited_audio(self):
-        # compile
-        # play
-        pass
+        back = Backend.getInstance()
+        back.load_audio("sounds/" + self.sound_title + ".mp3")
+        if self.speed_val != 1.00:
+            back.modify_speed(self.speed_val)
+        if self.pitch_val != 1.00:
+            back.modify_pitch(self.pitch_val)
+        if self.isReversed:
+            back.reverse()
+        if self.isOverlap:
+            pass
+            # back.overlap(file)
+        if self.isConcate:
+            pass
+            # back.concatenate(file)
+        if self.isRandomInsert:
+            pass
+            # back.random_insert(file)
+        back.play_modified_audio()
 
     def save_edited_audio(self):
-        # compile
-        # save
-        pass
+        Backend.load_audio(self.sound_title)
+        Backend.modify_speed(self.speed_val)
+        Backend.modify_pitch(self.pitch_val)
+        Backend.save(self.sound_title)
 
 
 if __name__ == "__main__":
