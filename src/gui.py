@@ -444,13 +444,18 @@ class EditFrame(BaseClass):
         self.speed_label = Label(self, text=self.speed_val)
         self.pitch_label = Label(self, text=self.pitch_val)
         self.options = self.db.view_sort_playlist("Your Library")
-        self.overlap_value = StringVar(self)
-        self.concat_value = StringVar(self)
-        self.randinsert_value = StringVar(self)
         
-        self.overlap_value.set("Select")
-        self.concat_value.set("Select")
-        self.randinsert_value.set("Select")
+        self.overlap_option = StringVar(self)
+        self.concat_option = StringVar(self)
+        self.randinsert_option = StringVar(self)
+        
+        self.overlap_value = None
+        self.concat_value = None
+        self.randinsert_value = None
+        
+        self.overlap_option.set("Select")
+        self.concat_option.set("Select")
+        self.randinsert_option.set("Select")
         
         self.isReversed = False
         self.isOverlap = False
@@ -583,11 +588,11 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.toggle_btn_click(overlap_button, "isOverlap"),
+            command=lambda: self.toggle_btn_click(overlap_button, "isOverlap", self.overlap_option.get(), "overlap_option", "overlap_value"),
         )
         overlap_button.grid(row=4, column=1, sticky=W)
         
-        overlap_menu = OptionMenu(self, self.overlap_value, *self.options)
+        overlap_menu = OptionMenu(self, self.overlap_option, *self.options)
         overlap_menu.grid(row=4, column=2)
 
         # sequential.
@@ -598,11 +603,11 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.toggle_btn_click(seq_button, "isConcate"),
+            command=lambda: self.toggle_btn_click(seq_button, "isConcate", self.concat_option.get(), "concat_option", "concat_value"),
         )
         seq_button.grid(row=5, column=1, sticky=W)
         
-        seq_menu = OptionMenu(self, self.concat_value, *self.options)
+        seq_menu = OptionMenu(self, self.concat_option, *self.options)
         seq_menu.grid(row=5, column=2)
 
         # rand insert.
@@ -613,12 +618,12 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.toggle_btn_click(rand_button, "isRandomInsert"),
+            command=lambda: self.toggle_btn_click(rand_button, "isRandomInsert", self.randinsert_option.get(), "randinsert_option", "randinsert_value"),
         )
 
         rand_button.grid(row=6, column=1, sticky=W)
         
-        rand_menu = OptionMenu(self, self.randinsert_value, *self.options)
+        rand_menu = OptionMenu(self, self.randinsert_option, *self.options)
         rand_menu.grid(row=6, column=2)
 
         # play button.
@@ -651,17 +656,21 @@ class EditFrame(BaseClass):
         )
         back_button.grid(pady=90, padx=30, row=8, column=0, sticky=W)
 
-    def toggle_btn_click(self, button, state):
-        print(f"test {self.randinsert_value.get}")
+    def toggle_btn_click(self, button, state, value=None, value_attribute=None, val = None):
+        value = value.strip("(')")
+        value = value[:-2]
         state_val = getattr(self, state)
         if button["bg"] == self.inactive_color:
             button["bg"] = self.active_color
+            state_val = not state_val
+            setattr(self, state, state_val)
+            setattr(self, val, value)
+            print(val + ": " + value)
             
         else:
             button["bg"] = self.inactive_color
+            state_val = not state_val
         
-        state_val = not state_val
-        setattr(self, state, state_val)
 
     def adjust_sound_attribute(self, is_increase, sound_attribute_val, label_attribute):
         sound_val = getattr(self, sound_attribute_val)
@@ -690,14 +699,11 @@ class EditFrame(BaseClass):
         if self.isReversed:
             back.reverse()
         if self.isOverlap:
-            pass
-            # back.overlap(file)
+            back.overlap(self.overlap_value)
         if self.isConcate:
-            pass
-            # back.concatenate(file)
+            back.concatenate(self.concat_value)
         if self.isRandomInsert:
-            pass
-            # back.random_insert(file)
+            back.random_insert(self.randinsert_value)
         back.play_modified_audio()
 
     def save_edited_audio(self):
