@@ -148,7 +148,8 @@ class Backend:
         Args:
             audio_file (AudioSegment): Audio segment to overlap with.
         """
-        self.changedAudioSegment.overlay(audio_file)
+        sound = AudioSegment.from_file(audio_file)
+        self.changedAudioSegment.overlay(sound)
 
     def concatentate(self, audio_file, crossfade_value):
         """
@@ -159,7 +160,8 @@ class Backend:
             crossfade_value (int): Crossfade duration in milliseconds.
         """
         # This should work, adapted straight from saturn
-        self.changedAudioSegment.append(audio_file, crossfade=crossfade_value)
+        sound = AudioSegment.from_file(audio_file)
+        self.changedAudioSegment.append(sound, crossfade=crossfade_value)
 
     def randomInsert(self, audio_file):
         """
@@ -168,6 +170,9 @@ class Backend:
         Args:
             audio_file (AudioSegment): Audio segment to insert.
         """
+        
+        sound = AudioSegment.from_file(audio_file)
+        
         length = len(self.changedAudioSegment)
 
         # Get random time to insert
@@ -175,7 +180,7 @@ class Backend:
 
         # Insert the audio file at the random time
         tempAudioSegment = self.changedAudioSegment[:random_time]
-        tempAudioSegment.append(audio_file)
+        tempAudioSegment.append(sound)
         tempAudioSegment.append(self.changedAudioSegment[random_time:])
 
         self.changedAudioSegment = tempAudioSegment
