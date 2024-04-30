@@ -443,6 +443,15 @@ class EditFrame(BaseClass):
         self.pitch_val = 1.00
         self.speed_label = Label(self, text=self.speed_val)
         self.pitch_label = Label(self, text=self.pitch_val)
+        self.options = self.db.view_sort_playlist("Your Library")
+        self.overlap_value = StringVar(self)
+        self.concat_value = StringVar(self)
+        self.randinsert_value = StringVar(self)
+        
+        self.overlap_value.set("Select")
+        self.concat_value.set("Select")
+        self.randinsert_value.set("Select")
+        
         self.isReversed = False
         self.isOverlap = False
         self.isConcate = False
@@ -577,8 +586,9 @@ class EditFrame(BaseClass):
             command=lambda: self.toggle_btn_click(overlap_button, "isOverlap"),
         )
         overlap_button.grid(row=4, column=1, sticky=W)
-        overlap_entry = Entry(self, width=30)
-        overlap_entry.grid(row=4, column=2)
+        
+        overlap_menu = OptionMenu(self, self.overlap_value, *self.options)
+        overlap_menu.grid(row=4, column=2)
 
         # sequential.
         seq_button = Button(
@@ -591,8 +601,9 @@ class EditFrame(BaseClass):
             command=lambda: self.toggle_btn_click(seq_button, "isConcate"),
         )
         seq_button.grid(row=5, column=1, sticky=W)
-        seq_entry = Entry(self, width=30)
-        seq_entry.grid(row=5, column=2)
+        
+        seq_menu = OptionMenu(self, self.concat_value, *self.options)
+        seq_menu.grid(row=5, column=2)
 
         # rand insert.
         rand_button = Button(
@@ -606,8 +617,9 @@ class EditFrame(BaseClass):
         )
 
         rand_button.grid(row=6, column=1, sticky=W)
-        rand_entry = Entry(self, width=30)
-        rand_entry.grid(row=6, column=2)
+        
+        rand_menu = OptionMenu(self, self.randinsert_value, *self.options)
+        rand_menu.grid(row=6, column=2)
 
         # play button.
         button = Button(
@@ -640,8 +652,8 @@ class EditFrame(BaseClass):
         back_button.grid(pady=90, padx=30, row=8, column=0, sticky=W)
 
     def toggle_btn_click(self, button, state):
+        print(f"test {self.randinsert_value.get}")
         state_val = getattr(self, state)
-        print(f"here is the state: {state_val}")
         if button["bg"] == self.inactive_color:
             button["bg"] = self.active_color
             
