@@ -151,6 +151,7 @@ class PlaylistFrame(BaseClass):
         ).grid(sticky=W, pady=10, padx=30, row=1, column=1)
 
         # Radio buttons (for each playlist in rows of 5).
+        self.db.connector.init_playlist()
         playlists_list = self.db.view_playlists()
 
         for idx, playlist in enumerate(playlists_list, start=2):

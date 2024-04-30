@@ -80,7 +80,7 @@ class DBConnector:
             print(f"Error: {err}")
 
         for filename in os.listdir(self.sound_dir):
-            if filename.endswith(".wav"):
+            if filename.endswith(".mp3"):
                 file_path = os.path.join(self.sound_dir, filename)
                 # Get the title.
                 title = os.path.splitext(filename)[0]

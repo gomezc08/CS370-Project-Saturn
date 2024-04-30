@@ -28,7 +28,7 @@ class PlaylistManager:
 
     def __init__(self):
         # composition relationship.
-        self.connector = DBConnector("../sounds")
+        self.connector = DBConnector("sounds")
         self.sort_type = {"Title", "Length", "DateCreated"}
 
     def view_sort_playlist(self, playlist_title, sort_name=None):
