@@ -44,11 +44,11 @@ class BaseClass(Tk):
         
         self.db = PlaylistManager()
         
-        
+        """
         global clustered
         if clustered == False:
             Backend.auto_cluster_audio_files()
-            clustered = True
+            clustered = True"""
 
     def change_frame(self, change_frame, sound_argument=None):
         self.destroy()
@@ -233,8 +233,6 @@ class PlaylistFrame(BaseClass):
         back_button.grid(pady=90, padx=30, row=idx + 2, column=1, sticky=W)
 
     def continue_with_selection(self):
-        # self.playlist_name = self.radio_item.get()
-        # self.playlist_name
         self.playlist_name = self.radio_item.get()
         self.sound_item = self.playlist_name
         self.change_frame(SoundFrame, sound_argument=self.radio_item.get())
@@ -267,8 +265,16 @@ class SoundFrame(BaseClass):
         BaseClass.__init__(self, **kwargs)
         self.playlist_title = playlist_title
         self.config(bg=self.bg_color)
+        
         self.dropdown_item = StringVar(value="Sort by")
+        self.dropdown_item.trace_add("write", lambda *args: self.reload_frame(SoundFrame, self.playlist_title, self.dropdown_item.get()))
+
+        self.add_menu_option = StringVar(value="Add to this Playlist")
+        self.add_menu_option.trace_add("write", lambda *args: self.db.add_sound_into_playlist(self.add_menu_option.get().strip('()\'')[:-2], self.playlist_title))
+        self.add_menu_option.trace_add("write", lambda *args: self.reload_frame(SoundFrame, playlist_title, "Title"))
+        
         self.sort_name = sort_name
+        self.options = self.db.view_sort_playlist("Your Library")
 
         # layout screen.
         # [Playlist title].
@@ -352,23 +358,9 @@ class SoundFrame(BaseClass):
 
         # add sound button (only shows up in non your library playlists).
         if self.playlist_title != "Your Library":
-            # creating the label.
-            add_l = Entry(self, width=50)
-            add_l.grid(row=r + 1, column=0, padx=20, pady=10)
-
-            # creating the button.
-            add_b = Button(
-                self,
-                text="Add to this Playlist",
-                padx=50,
-                pady=5,
-                bg=self.default_button_color,
-                fg="White",
-                command=lambda: self.db.add_sound_into_playlist(
-                    add_l.get(), self.playlist_title
-                ),
-            )
-            add_b.grid(padx=20, pady=5, row=r + 2, column=0)
+            # add to playlist option menu.            
+            add_menu = OptionMenu(self, self.add_menu_option, *self.options)
+            add_menu.grid(padx=20, pady=5, row=r+1, column=1)
 
         # remove sound from playlist button.
         remove_button = Button(
@@ -385,23 +377,7 @@ class SoundFrame(BaseClass):
         # Sort by dropdown.
         sort_options = ["Title", "Length", "DateCreated"]
         sort_dropdown = OptionMenu(self, self.dropdown_item, *sort_options)
-        sort_dropdown.grid(row=r + 3, column=2)
-        sort_dropdown.config(bg=self.default_button_color, fg="White")
-        sort_dropdown["menu"].config(bg="GREEN")
-
-        # Go button for dropdown.
-        ok_button = Button(
-            self,
-            text="Go",
-            padx=30,
-            pady=5,
-            command=lambda: self.reload_frame(
-                SoundFrame, playlist_title, self.dropdown_item.get()
-            ),
-            bg="green",
-            fg="White",
-        )
-        ok_button.grid(row=r + 4, column=2, pady=20, padx=10)
+        sort_dropdown.grid(row=r+1, column=3)
 
         # back button.
         back_button = Button(
