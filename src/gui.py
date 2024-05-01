@@ -33,7 +33,7 @@ class BaseClass(Tk):
 
         # Set up common attributes
         self.font_title = "Courier New"
-        self.geometry("950x600")
+        self.geometry("1300x700")
         self.title("Saturn Sound Archive")
         self.default_button_color = "#102C57"
         self.bg_color = "#ead6b8"
@@ -320,7 +320,7 @@ class SoundFrame(BaseClass):
                 command=lambda: sound_label.config(text=self.radio_item.get()),
                 fg="Black",
                 bg=self.bg_color,
-                width=20,
+                width=32,
             )
             sound_button.grid(row=r, column=c, pady=5, padx=5, sticky=EW)
             c += 1
