@@ -1,6 +1,4 @@
 import os, sys
-import shutil
-import wave
 
 parent_dir = os.path.dirname(os.getcwd())
 sys.path.insert(0, parent_dir + "/Database")
@@ -50,6 +48,7 @@ class BaseClass(Tk):
             Backend.auto_cluster_audio_files()
             clustered = True"""
 
+
     def change_frame(self, change_frame, sound_argument=None):
         self.destroy()
         if sound_argument is not None:
@@ -57,6 +56,7 @@ class BaseClass(Tk):
         else:
             app = change_frame()
         app.mainloop()
+
 
     def reload_frame(self, change_frame, sound_argument=None, sort=None):
         self.destroy()
@@ -113,7 +113,7 @@ class PlaylistFrame(BaseClass):
     Frame for playlist screen of our sound archive app.
 
     Attributes:
-        entry (Entry): White prompt box which allows user to type name of playlist they want to create.
+        playlist_entry (Entry): White prompt box which allows user to type name of playlist they want to create.
 
     Methods:
         continue_with_selection: handles setting up next frame.
@@ -121,11 +121,12 @@ class PlaylistFrame(BaseClass):
         delete_playlist: handles deleting playlist from database.
     """
 
+
     def __init__(self, *args, **kwargs):
         # initialize screen.
         BaseClass.__init__(self, *args, **kwargs)
         self.config(bg=self.bg_color)
-        self.entry = Entry(self, width=50)
+        self.playlist_entry = Entry(self, width=50)
 
         # layout screen.
         # Playlist Manager title.
@@ -150,10 +151,10 @@ class PlaylistFrame(BaseClass):
             bg=self.bg_color,
         ).grid(sticky=W, pady=10, padx=30, row=1, column=1)
 
-        # Radio buttons (for each playlist in rows of 5).
         self.db.connector.init_playlist()
         playlists_list = self.db.view_playlists()
-
+    
+        # Radio buttons (for each playlist in rows of 5).
         for idx, playlist in enumerate(playlists_list, start=2):
             r_button = Radiobutton(
                 self,
@@ -212,7 +213,7 @@ class PlaylistFrame(BaseClass):
         ).grid(row=1, column=3, sticky=W)
 
         # white entry box.
-        self.entry.grid(padx=50, pady=5, row=2, column=3, sticky=E)
+        self.playlist_entry.grid(padx=50, pady=5, row=2, column=3, sticky=E)
 
         # Create Playlist button.
         plus_button = Button(
@@ -232,14 +233,17 @@ class PlaylistFrame(BaseClass):
         )
         back_button.grid(pady=90, padx=30, row=idx + 2, column=1, sticky=W)
 
+
     def continue_with_selection(self):
         self.playlist_name = self.radio_item.get()
         self.sound_item = self.playlist_name
         self.change_frame(SoundFrame, sound_argument=self.radio_item.get())
 
+
     def create_new_playlist(self):
-        self.db.create_playlist(self.entry.get())
+        self.db.create_playlist(self.playlist_entry.get())
         self.reload_frame(PlaylistFrame)
+
 
     def delete_playlist(self):
         self.db.delete_playlist(self.radio_item.get())
@@ -252,7 +256,8 @@ class SoundFrame(BaseClass):
 
     Attributes:
         playlist_title (str): User chosen playlist title from previous frame specifiec using radio buttons.
-        dropdown_item (StringVar): handles drop down entry options that user clicks on.
+        sort_dropdown (StringVar): handles drop down entry options that user clicks on for sorting sounds in playlist.
+        add_dropdown (StringVar): handles drop down entry options that user clicks on for adding sound to playlist.
         sort_name (str): user chosen drop down item that they want to sort the sounds in the playlist by.
 
     Methods:
@@ -265,17 +270,16 @@ class SoundFrame(BaseClass):
         BaseClass.__init__(self, **kwargs)
         self.playlist_title = playlist_title
         self.config(bg=self.bg_color)
-        
-        self.dropdown_item = StringVar(value="Sort by")
-        self.dropdown_item.trace_add("write", lambda *args: self.reload_frame(SoundFrame, self.playlist_title, self.dropdown_item.get()))
-
-        self.add_menu_option = StringVar(value="Add to this Playlist")
-        self.add_menu_option.trace_add("write", lambda *args: self.db.add_sound_into_playlist(self.add_menu_option.get().strip('()\'')[:-2], self.playlist_title))
-        self.add_menu_option.trace_add("write", lambda *args: self.reload_frame(SoundFrame, playlist_title, "Title"))
-        
         self.sort_name = sort_name
         self.options = self.db.view_sort_playlist("Your Library")
+        
+        self.sort_dropdown = StringVar(value="Sort by")
+        self.sort_dropdown.trace_add("write", lambda *args: self.reload_frame(SoundFrame, self.playlist_title, self.sort_dropdown.get()))
 
+        self.add_dropdown = StringVar(value="Add to this Playlist")
+        self.add_dropdown.trace_add("write", lambda *args: self.db.add_sound_into_playlist(self.add_dropdown.get().strip('()\'')[:-2], self.playlist_title))
+        self.add_dropdown.trace_add("write", lambda *args: self.reload_frame(SoundFrame, playlist_title, "Title"))
+        
         # layout screen.
         # [Playlist title].
         Label(
@@ -359,7 +363,7 @@ class SoundFrame(BaseClass):
         # add sound button (only shows up in non your library playlists).
         if self.playlist_title != "Your Library":
             # add to playlist option menu.            
-            add_menu = OptionMenu(self, self.add_menu_option, *self.options)
+            add_menu = OptionMenu(self, self.add_dropdown, *self.options)
             add_menu.grid(padx=20, pady=5, row=r+1, column=1)
 
         # remove sound from playlist button.
@@ -376,7 +380,7 @@ class SoundFrame(BaseClass):
 
         # Sort by dropdown.
         sort_options = ["Title", "Length", "DateCreated"]
-        sort_dropdown = OptionMenu(self, self.dropdown_item, *sort_options)
+        sort_dropdown = OptionMenu(self, self.sort_dropdown, *sort_options)
         sort_dropdown.grid(row=r+1, column=3)
 
         # back button.
@@ -385,9 +389,11 @@ class SoundFrame(BaseClass):
         )
         back_button.grid(pady=90, padx=30, row=r + 5, column=0, sticky=W)
 
+
     def continue_with_selection(self):
         self.sound_item = self.radio_item.get()
         self.change_frame(EditFrame, sound_argument=self.radio_item.get())
+
 
     def remove_button(self):
         self.db.remove_sound_from_playlist(self.radio_item.get(), self.playlist_title)
@@ -400,12 +406,28 @@ class EditFrame(BaseClass):
 
     Attributes:
         sound_title (str): User chosen sound title from previous frame specifiec using radio buttons.
-        active_color: color on button if the button is active.
-        inactive_color: color on button if the button is inactive.
-
+        active_color (str): color on button if the button is active.
+        inactive_color (str): color on button if the button is inactive.
+        speed_val (double): value indicating sound speed.
+        pitch_val: value indicating pitch intensity.
+        overlap_option (str): dropdown for overlap_value.
+        concat_option (str): dropdown for concat_value.
+        randinsert_option (str): dropdown for randinsert_value.
+        speed_label (label): label showcasing the current speed_val.
+        pitch_label (label): label showcasing the current pitch_val.
+        options (list): list of sounds in chosen playlist. 
+        overlap_value (str): name of sound file user wants to overlap with edited sound.
+        concat_value (str): name of sound file user wants to concatenate with edited sound.
+        randinsert_value (str): name of sound file user wants to randomly insert with edited sound.
+        isReversed (bool): boolean indicates if the user wants to reverse sound.
+        isOverlap (bool): boolean indicates if the user wants to overlap sound.
+        isConcat (bool): boolean indicates if the user wants to concatenate sound.
+        isRandomInsert (bool): boolean indicates if the user wants to randomly insert sound.
+        
     Methods:
         toggle_btn_click: handles activating and deactivating a button when pressed.
         compile_edited_audio: handles creating new audio file based on user specified edited sound features.
+        adjust_sound_attribute: handles user increasing or decreasing sound and pitch values.
         save_edited_audio: handles creating new audio file based on user specified edited sound features and saving sound to sounds directory and database.
     """
 
@@ -417,13 +439,15 @@ class EditFrame(BaseClass):
         self.inactive_color = "#FFFACD"
         self.speed_val = 1.00
         self.pitch_val = 1.00
-        self.speed_label = Label(self, text=self.speed_val)
-        self.pitch_label = Label(self, text=self.pitch_val)
-        self.options = self.db.view_sort_playlist("Your Library")
         
         self.overlap_option = StringVar(self)
         self.concat_option = StringVar(self)
         self.randinsert_option = StringVar(self)
+        
+        self.speed_label = Label(self, text=self.speed_val)
+        self.pitch_label = Label(self, text=self.pitch_val)
+        
+        self.options = self.db.view_sort_playlist("Your Library")
         
         self.overlap_value = None
         self.concat_value = None
@@ -435,7 +459,7 @@ class EditFrame(BaseClass):
         
         self.isReversed = False
         self.isOverlap = False
-        self.isConcate = False
+        self.isConcat = False
         self.isRandomInsert = False
 
         # [Sound] title
@@ -476,14 +500,6 @@ class EditFrame(BaseClass):
             bg=self.bg_color,
             font=("Courier New", 10),
         ).grid(row=6, column=0, padx=50, pady=15, sticky=W)
-
-        """
-        def adjust_speed_label(isIncrease):
-            if isIncrease and self.speed_val < 2.00:
-                self.speed_val += 0.25
-            elif not isIncrease and self.speed_val > 0.00:
-                self.speed_val -= 0.25
-            self.speed_label.config(text="{:.2f}".format(self.speed_val))"""
 
         # speed up button.
         speed_up_button = Button(
@@ -579,7 +595,7 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.toggle_btn_click(seq_button, "isConcate", self.concat_option.get(), "concat_option", "concat_value"),
+            command=lambda: self.toggle_btn_click(seq_button, "isConcat", self.concat_option.get(), "concat_option", "concat_value"),
         )
         seq_button.grid(row=5, column=1, sticky=W)
         
@@ -632,6 +648,7 @@ class EditFrame(BaseClass):
         )
         back_button.grid(pady=90, padx=30, row=8, column=0, sticky=W)
 
+
     def toggle_btn_click(self, button, state, value=None, value_attribute=None, val = None):
         value = value.strip("(')")
         value = value[:-2]
@@ -647,7 +664,7 @@ class EditFrame(BaseClass):
             button["bg"] = self.inactive_color
             state_val = not state_val
         
-
+        
     def adjust_sound_attribute(self, is_increase, sound_attribute_val, label_attribute):
         sound_val = getattr(self, sound_attribute_val)
         label_val = getattr(self, label_attribute)
@@ -665,6 +682,7 @@ class EditFrame(BaseClass):
         # Update the attribute value
         setattr(self, sound_attribute_val, temp_val)
 
+
     def compile_edited_audio(self):
         back = Backend.getInstance()
         back.load_audio("sounds/" + self.sound_title + ".mp3")
@@ -676,11 +694,12 @@ class EditFrame(BaseClass):
             back.reverse()
         if self.isOverlap:
             back.overlap(self.overlap_value)
-        if self.isConcate:
+        if self.isConcat:
             back.concatenate(self.concat_value)
         if self.isRandomInsert:
             back.random_insert(self.randinsert_value)
         back.play_modified_audio()
+
 
     def save_edited_audio(self):
         Backend.load_audio(self.sound_title)
