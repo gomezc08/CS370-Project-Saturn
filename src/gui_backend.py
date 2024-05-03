@@ -77,6 +77,13 @@ class Backend:
         """
         self.audioSegment = AudioSegment.from_file(audio_file)
         self.changedAudioSegment = self.audioSegment
+    
+    def pause_audio(self):
+        """
+        Pauses the audio.
+        """
+        self.paused = True
+        p.pause()
 
     def modify_speed(self, change_amnt):
         """
@@ -139,7 +146,7 @@ class Backend:
         Args:
             name (str): Name of the output file.
         """
-        self.changedAudioSegment.export(name, format="wav")
+        self.changedAudioSegment.export(name, format="mp3")
 
     def overlap(self, audio_file):
         """
@@ -196,7 +203,7 @@ class Backend:
         if pitch_val != 1:
             self.modify_pitch(pitch_val)
         
-        if not reverse:
+        if reverse:
             self.reverse()
         
         if overlap != None:  

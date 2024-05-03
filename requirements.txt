@@ -7,3 +7,5 @@ ffmpeg-python # for playing other audio files on windows (potentially)
 pydub # for playing other audio files on windows (potentially)
 mysql # for database stuff
 pandas # for the help function
+librosa
+kneed

@@ -42,11 +42,11 @@ class BaseClass(Tk):
         
         self.db = PlaylistManager()
         
-        """
+        
         global clustered
         if clustered == False:
             Backend.auto_cluster_audio_files()
-            clustered = True"""
+            clustered = True
 
 
     def change_frame(self, change_frame, sound_argument=None):
@@ -347,6 +347,18 @@ class SoundFrame(BaseClass):
             fg="white",
         )
         play_btn.grid(row=r, column=1, pady=20, padx=10)
+        
+        # TODO: Implement this
+        # pause_btn = Button(
+        #     self,
+        #     text="Pause",
+        #     command=Backend.pause_audio,
+        #     padx=50,
+        #     pady=5,
+        #     bg=self.default_button_color,
+        #     fg="white",
+        # )
+        # pause_btn.grid(row=r, column=2, pady=20, padx=10)
 
         # edit button.
         play_edit = Button(
@@ -358,6 +370,7 @@ class SoundFrame(BaseClass):
             bg=self.default_button_color,
             fg="white",
         )
+        # TODO: Change the column once pause is implemented
         play_edit.grid(row=r, column=2, pady=20, padx=10)
 
         # add sound button (only shows up in non your library playlists).
@@ -716,7 +729,7 @@ class EditFrame(BaseClass):
             back.concatenate(self.concat_value)
         if self.isRandomInsert:
             back.random_insert(self.randinsert_value)
-        back.save(self.sound_title + "_modified")
+        back.save("sounds/" + self.sound_title + "_modified")
         
         PlaylistManager.connector.init_playlist()
 if __name__ == "__main__":
