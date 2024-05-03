@@ -3,21 +3,8 @@
 - ### NOTE: This project requires either ffmpeg (linux) or libav (windows) to be installed on your system.
   - ### In addition, it now requires a SQL client.
 
-## CONNECTING TO MYSQL WORKBENCH
-
-- [x] Start by downloading the SQLTools extension developed by Matheus Teixeira.
-- [x] Navigate to SQLtools extensions, accessible from the left panel.
-- [x] Click on "add new connection", then select "Search VSCode marketplace".
-- [x] Locate and install "SQLTools MySQL/MariaDB" from the available options, typically found as the first link.
-- [x] On SQLTools Settings tab, click on MySQL and enter the following information...
-- [x] Connection name: saturn_sql
-- [x] Server Address: localhost
-- [x] Port: 3307
-- [x] Database: soundarchive
-- [x] Username: root
-- [x] Password word: whatever you want but I suggest Ask on connect. Here is the password: !WhitmanMemo08?
-- [x] Test/save the connection.
-- [x] Before running SQL commands each time, make sure you connect/disconnect to the database. You can use the SQLTools to view tables/data of our playlists.
+- ### HOW TO RUN GUI: `python .\src\gui.py`
+  - ### In addition, you can run our program from cli (see docs folder for reference on how to do this).  
 
 # Project Saturn
 
@@ -79,23 +66,25 @@ Part c:
 - [x] Unit testing (Saturn CLI)
 - [x] Unit testing (Database)
 
-## Group members
+## GROUP MEMBERS
 
-- Neel Troeger
-- Chris Gomez
-- Aidan von Buschwaldt
-- Jas Liu
+- [x] Neel Troeger
+- [x] Chris Gomez
+- [x] Aidan von Buschwaldt
+- [x] Jas Liu
 
-## Epoch Two Contributions.
+## EPOCH TWO CONTRIBUTIONS
 
-- Chris Gomez: DBConnector.py, PlaylistManager.py, UML diagram, started gui.py, and contributed to unit_testing.py, story map, and user stories.
-- Neel: Audio transcoding, audio concatenation, audio reversal, unit testing for the cli.
+- [x] Chris Gomez: DBConnector.py, PlaylistManager.py, UML diagram, started gui.py, and contributed to unit_testing.py, story map, and user stories.
+- [x] Neel: Audio transcoding, audio concatenation, audio reversal, unit testing for the cli.
 
-## Epoch Two Challenges and modification anticipations.
+## EPOCH TWO CHALLENGES AND MODIFICATION ANTICIPATIONS
 
-- Chris Gomez: I tackled the challenge of setting up a connection to a MySQL workbench on my laptop. It was my first time dealing with database connections, cursors, and writing queries. Despite the initial difficulties, I successfully established the link. Looking ahead, I plan to move away from using lists to manage playlist sounds and focus on optimizing query performance through indexing strategies.
-- Neel Troeger: Pydub was very easy to work with, providing an interface to manipulate audio files using ffmpeg/libav. Writing the audio transcoding command was quick and easy, but the audio concatenation was a bit more difficult, mostly because of how many inputs it took. I also had to write a function to reverse audio files, which was not very hard, but I learned that my earlier implementation for Epoch 1 did not work as expected. The most difficult part was writing the unit tests, since we went such along time without writing any. At least now that they exist, we can continue to add more as we add more features. 
+- [x] Chris Gomez: I tackled the challenge of setting up a connection to a MySQL workbench on my laptop. It was my first time dealing with database connections, cursors, and writing queries. Despite the initial difficulties, I successfully established the link. Looking ahead, I plan to move away from using lists to manage playlist sounds and focus on optimizing query performance through indexing strategies.
+- [x] Neel Troeger: Pydub was very easy to work with, providing an interface to manipulate audio files using ffmpeg/libav. Writing the audio transcoding command was quick and easy, but the audio concatenation was a bit more difficult, mostly because of how many inputs it took. I also had to write a function to reverse audio files, which was not very hard, but I learned that my earlier implementation for Epoch 1 did not work as expected. The most difficult part was writing the unit tests, since we went such along time without writing any. At least now that they exist, we can continue to add more as we add more features. 
 
-## Command Lines.
+## PROJECT INDIVIDUAL CONTRIBUTIONS
+- [x] Chris Gomez: Implemented the DBConnector.py, PlaylistManager.py, and gui.py, and also provided assistance in the following: use_cases, gui_backend.py
 
-- python .\PlaylistManager.py in database directory to initialize playlists and create an example playlist and add sounds to it and view it (part b of epoch 2)!
+## INDIVIDUAL REFLECTIONS
+- [x] Chris Gomez: The gui was the biggest learning curve I had to spend a whole saturday flipping through yt tutorials and when it came to integrating, I had to redo my gui a few times to make it more elegant and fit some sort of software design rather than having a bunch of random functions. I wish we had came up with like a pause/play button but that's something I would do if I had more time.
