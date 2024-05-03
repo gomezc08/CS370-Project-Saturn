@@ -3,8 +3,8 @@
 - ### NOTE: This project requires either ffmpeg (linux) or libav (windows) to be installed on your system.
   - ### In addition, it now requires a SQL client.
 
-- ### HOW TO RUN GUI: `python .\src\gui.py`
-  - ### In addition, you can run our program from cli (see docs folder for reference on how to do this).  
+- ### HOW TO RUN GUI: Run `python .\src\gui.py` frnom the command line.
+  - ### You can also run our program from the command line interface (CLI). See the docs folder for reference on how to do this.  
 
 # Project Saturn
 
@@ -84,7 +84,12 @@ Part c:
 - [x] Neel Troeger: Pydub was very easy to work with, providing an interface to manipulate audio files using ffmpeg/libav. Writing the audio transcoding command was quick and easy, but the audio concatenation was a bit more difficult, mostly because of how many inputs it took. I also had to write a function to reverse audio files, which was not very hard, but I learned that my earlier implementation for Epoch 1 did not work as expected. The most difficult part was writing the unit tests, since we went such along time without writing any. At least now that they exist, we can continue to add more as we add more features. 
 
 ## PROJECT INDIVIDUAL CONTRIBUTIONS
-- [x] Chris Gomez: Implemented the DBConnector.py, PlaylistManager.py, and gui.py, and also provided assistance in the following: use_cases, gui_backend.py
+- [x] Chris Gomez: 
+    - Implemented DBConnector.py
+    - Implemented PlaylistManager.py
+    - Implemented gui.py
+    - Contributed to use_cases
+    - Contributed to gui_backend.py
 
 ## INDIVIDUAL REFLECTIONS
-- [x] Chris Gomez: The gui was the biggest learning curve I had to spend a whole saturday flipping through yt tutorials and when it came to integrating, I had to redo my gui a few times to make it more elegant and fit some sort of software design rather than having a bunch of random functions. I wish we had came up with like a pause/play button but that's something I would do if I had more time.
+- [x] Chris Gomez: The gui was the biggest learning curve I had to spend a whole saturday flipping through yt tutorials and when it came to integrating, I had to redo my gui a few times to make it more elegant and fit some sort of software design rather than having a bunch of random functions. Another big challenge was the embedded sql aspect using python since we had just learnt it this last semester in databases. I wish we had came up with like a pause/play button. I also would have loved to have some sort of media sounds storage system so we weren't reliant on a directory. I also would love to make the gui visually more organized because I feel it is a little messy. 
