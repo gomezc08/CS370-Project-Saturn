@@ -90,7 +90,6 @@ part c: setting up a backend.
 Our goal is to extend our sound features from command line to something the gui can utilize.
 - [x]
 
-
 **GROUP MEMBERS:**
 
 - [x] Neel Troeger
@@ -98,23 +97,15 @@ Our goal is to extend our sound features from command line to something the gui 
 - [x] Aidan von Buschwaldt
 - [x] Jas Liu
 
-**EPOCH TWO CONTRIBUTIONS:**
-
-- [x] Chris Gomez: DBConnector.py, PlaylistManager.py, UML diagram, started gui.py, and contributed to unit_testing.py, story map, and user stories.
-- [x] Neel: Audio transcoding, audio concatenation, audio reversal, unit testing for the cli.
-
-**EPOCH TWO CHALLENGES AND MODIFICATION ANTICIPATIONS:**
-
-- [x] Chris Gomez: I tackled the challenge of setting up a connection to a MySQL workbench on my laptop. It was my first time dealing with database connections, cursors, and writing queries. Despite the initial difficulties, I successfully established the link. Looking ahead, I plan to move away from using lists to manage playlist sounds and focus on optimizing query performance through indexing strategies.
-- [x] Neel Troeger: Pydub was very easy to work with, providing an interface to manipulate audio files using ffmpeg/libav. Writing the audio transcoding command was quick and easy, but the audio concatenation was a bit more difficult, mostly because of how many inputs it took. I also had to write a function to reverse audio files, which was not very hard, but I learned that my earlier implementation for Epoch 1 did not work as expected. The most difficult part was writing the unit tests, since we went such along time without writing any. At least now that they exist, we can continue to add more as we add more features. 
-
 **PROJECT INDIVIDUAL CONTRIBUTIONS:**
 
 - [x] Chris Gomez: 
     - Implemented DBConnector.py
     - Implemented PlaylistManager.py
+    - Implemented SQL.sql
     - Implemented gui.py
     - Contributed to use_cases
+    - Contributed to story maps
     - Contributed to gui_backend.py
 
 **INDIVIDUAL REFLECTIONS:**

@@ -47,6 +47,7 @@ class BaseClass(Tk):
         if clustered == False:
             Backend.auto_cluster_audio_files()
             clustered = True
+            clustered = True
 
 
     def change_frame(self, change_frame, sound_argument=None):
@@ -663,15 +664,16 @@ class EditFrame(BaseClass):
 
 
     def toggle_btn_click(self, button, state, value=None, value_attribute=None, val = None):
-        value = value.strip("(')")
-        value = value[:-2]
+        if value is not None:
+            value = value.strip("(')")
+            value = value[:-2]
         state_val = getattr(self, state)
         if button["bg"] == self.inactive_color:
             button["bg"] = self.active_color
             state_val = not state_val
             setattr(self, state, state_val)
-            setattr(self, val, value)
-            print(val + ": " + value)
+            if value is not None:
+                setattr(self, val, value)
             
         else:
             button["bg"] = self.inactive_color
