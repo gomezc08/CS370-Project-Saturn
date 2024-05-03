@@ -42,11 +42,10 @@ class BaseClass(Tk):
         
         self.db = PlaylistManager()
         
-        """
         global clustered
         if clustered == False:
             Backend.auto_cluster_audio_files()
-            clustered = True"""
+            clustered = True
 
 
     def change_frame(self, change_frame, sound_argument=None):
