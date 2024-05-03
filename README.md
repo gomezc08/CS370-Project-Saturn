@@ -16,8 +16,12 @@
 - [x] gui backend object
 - [x] convert to mp3
 - [x] saving and playing in the edit frame
-- [ ] testing clustering with larger sound files.
+- [x] testing clustering with larger sound files.
 - [ ] Fix deleting playlists
+- [ ] Autodelete songs on startup?
+
+LIMITATIONS:
+- Files with long titles are incompatible with the db stuff
 
 **DONE:**
 

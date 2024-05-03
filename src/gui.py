@@ -702,12 +702,23 @@ class EditFrame(BaseClass):
 
 
     def save_edited_audio(self):
-        Backend.load_audio(self.sound_title)
-        Backend.modify_speed(self.speed_val)
-        Backend.modify_pitch(self.pitch_val)
-        Backend.save(self.sound_title)
-
-
+        back = Backend.getInstance()
+        back.load_audio("sounds/" + self.sound_title + ".mp3")
+        if self.speed_val != 1.00:
+            back.modify_speed(self.speed_val)
+        if self.pitch_val != 1.00:
+            back.modify_pitch(self.pitch_val)
+        if self.isReversed:
+            back.reverse()
+        if self.isOverlap:
+            back.overlap(self.overlap_value)
+        if self.isConcat:
+            back.concatenate(self.concat_value)
+        if self.isRandomInsert:
+            back.random_insert(self.randinsert_value)
+        back.save(self.sound_title + "_modified")
+        
+        PlaylistManager.connector.init_playlist()
 if __name__ == "__main__":
     app = HomeFrame()
     app.mainloop()
