@@ -731,7 +731,7 @@ class EditFrame(BaseClass):
             back.concatenate("sounds/" + self.concat_value + ".mp3")
         if self.isRandomInsert:
             back.randomInsert("sounds/" + self.randinsert_value + ".mp3")
-        back.save("sounds/" + self.sound_title + "_modified")
+        back.save("sounds/" + self.sound_title + "_modified.mp3")
 if __name__ == "__main__":
     app = HomeFrame()
     app.mainloop()

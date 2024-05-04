@@ -112,8 +112,8 @@ class AudioClustering:
 
         return optimal_epsilon
 
-    def cluster_audio_files(self, eps=0.5, min_samples=2):
-        # List all audio files in the directory
+    def cluster_audio_files(self, eps=0.5, min_samples=2): # we can up min_samples when we have more audio files
+        # List all audio files in the directory              but its better to keep it low for now
         audio_files = [
             os.path.join(self.audio_dir, file)
             for file in os.listdir(self.audio_dir)
