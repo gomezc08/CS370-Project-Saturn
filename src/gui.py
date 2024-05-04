@@ -708,11 +708,11 @@ class EditFrame(BaseClass):
         if self.isReversed:
             back.reverse()
         if self.isOverlap:
-            back.overlap(self.overlap_value)
+            back.overlap("sounds/" + self.overlap_value + ".mp3")
         if self.isConcat:
-            back.concatenate(self.concat_value)
+            back.concatenate("sounds/" + self.concat_value + ".mp3")
         if self.isRandomInsert:
-            back.random_insert(self.randinsert_value)
+            back.randomInsert("sounds/" + self.randinsert_value + ".mp3")
         back.play_modified_audio()
 
 
@@ -726,14 +726,12 @@ class EditFrame(BaseClass):
         if self.isReversed:
             back.reverse()
         if self.isOverlap:
-            back.overlap(self.overlap_value)
+            back.overlap("sounds/" + self.overlap_value + ".mp3")
         if self.isConcat:
-            back.concatenate(self.concat_value)
+            back.concatenate("sounds/" + self.concat_value + ".mp3")
         if self.isRandomInsert:
-            back.random_insert(self.randinsert_value)
+            back.randomInsert("sounds/" + self.randinsert_value + ".mp3")
         back.save("sounds/" + self.sound_title + "_modified")
-        
-        PlaylistManager.connector.init_playlist()
 if __name__ == "__main__":
     app = HomeFrame()
     app.mainloop()

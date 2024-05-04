@@ -158,7 +158,7 @@ class Backend:
         sound = AudioSegment.from_file(audio_file)
         self.changedAudioSegment.overlay(sound)
 
-    def concatentate(self, audio_file, crossfade_value):
+    def concatenate(self, audio_file, crossfade_value=0):
         """
         Concatenates the modified audio with another audio file.
 
