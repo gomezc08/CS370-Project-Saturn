@@ -74,14 +74,16 @@ class HomeFrame(BaseClass):
         None
 
     Methods:
-        None
+        create_frame: creates the visual layout of the frame.
     """
 
     def __init__(self, *args, **kwargs):
         # intialize screen.
         BaseClass.__init__(self, *args, **kwargs)
         self.config(bg=self.bg_color)
+        self.create_frame()
 
+    def create_frame(self):
         # layout screen.
         Label(
             self,
@@ -115,6 +117,7 @@ class PlaylistFrame(BaseClass):
         playlist_entry (Entry): White prompt box which allows user to type name of playlist they want to create.
 
     Methods:
+        create_frame: creates the visual layout of the frame.
         continue_with_selection: handles setting up next frame.
         create_new_playlist: handles setting up a new playlist in database.
         delete_playlist: handles deleting playlist from database.
@@ -125,7 +128,9 @@ class PlaylistFrame(BaseClass):
         BaseClass.__init__(self, *args, **kwargs)
         self.config(bg=self.bg_color)
         self.playlist_entry = Entry(self, width=50)
+        self.create_frame()
 
+    def create_frame(self):
         # layout screen.
         # Playlist Manager title.
         Label(
@@ -256,6 +261,7 @@ class SoundFrame(BaseClass):
         sort_name (str): user chosen drop down item that they want to sort the sounds in the playlist by.
 
     Methods:
+        create_frame: creates the visual layout of the frame.
         continue_with_selection: handles setting up next frame.
         remove_button: removes the sound selected in the playlist and updates the display accordingly.
     """
@@ -287,7 +293,10 @@ class SoundFrame(BaseClass):
             "write",
             lambda *args: self.reload_frame(SoundFrame, playlist_title, "Title"),
         )
+        
+        self.create_frame()
 
+    def create_frame(self):
         # layout screen.
         # [Playlist title].
         Label(
@@ -438,6 +447,7 @@ class EditFrame(BaseClass):
         isRandomInsert (bool): boolean indicates if the user wants to randomly insert sound.
 
     Methods:
+        create_frame: creates the visual layout of the frame.
         toggle_btn_click: handles activating and deactivating a button when pressed.
         compile_edited_audio: handles creating new audio file based on user specified edited sound features.
         adjust_sound_attribute: handles user increasing or decreasing sound and pitch values.
@@ -475,6 +485,9 @@ class EditFrame(BaseClass):
         self.isConcat = False
         self.isRandomInsert = False
 
+        self.create_frame()
+        
+    def create_frame(self):
         # [Sound] title
         Label(
             self,
