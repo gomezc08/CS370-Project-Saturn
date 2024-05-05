@@ -76,12 +76,6 @@ class Backend:
         """
         self.audioSegment = AudioSegment.from_file(audio_file)
         self.changedAudioSegment = self.audioSegment
-    
-    def pause():
-        """
-        Pauses the audio playback.
-        """
-        p.stop()
 
     def modify_speed(self, change_amnt):
         """

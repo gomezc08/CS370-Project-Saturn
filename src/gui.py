@@ -336,30 +336,21 @@ class SoundFrame(BaseClass):
         play_btn = Button(
             self,
             text="Play",
-            command=lambda: Backend.play_audio_file(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                + "/sounds/"
-                + self.radio_item.get()
-                + ".mp3"
+            command=lambda: (
+                Backend.play_audio_file(
+                    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                    + "/sounds/"
+                    + self.radio_item.get()
+                    + ".mp3"
+                ),
             ),
             padx=50,
             pady=5,
             bg=self.default_button_color,
             fg="white",
         )
+
         play_btn.grid(row=r, column=1, pady=20, padx=10)
-        
-        # TODO: Implement this
-        # pause_btn = Button(
-        #     self,
-        #     text="Pause",
-        #     command=Backend.pause_audio,
-        #     padx=50,
-        #     pady=5,
-        #     bg=self.default_button_color,
-        #     fg="white",
-        # )
-        # pause_btn.grid(row=r, column=2, pady=20, padx=10)
 
         # edit button.
         play_edit = Button(
@@ -412,7 +403,9 @@ class SoundFrame(BaseClass):
     def remove_button(self):
         self.db.remove_sound_from_playlist(self.radio_item.get(), self.playlist_title)
         self.reload_frame(SoundFrame, self.playlist_title)
-
+    
+    def stop_playback(self):
+        Backend.pause()
 
 class EditFrame(BaseClass):
     """
@@ -654,8 +647,9 @@ class EditFrame(BaseClass):
             pady=5,
             command=self.save_edited_audio,
         )
-        button_save.grid(row=7, column=2, sticky=E, pady=20)
+        button_save.grid(row = 7, column=2, sticky=W, pady=20)
         
+        # need to not be so close to save button.
         button_revert = Button(
             self,
             text="Revert",
@@ -663,9 +657,9 @@ class EditFrame(BaseClass):
             bg=self.default_button_color,
             padx=30,
             pady=5,
-            command=lambda: self.reload_frame(EditFrame, self.sound_title),
+            command=lambda: EditFrame.reload_frame(self, EditFrame, sound_title)
         )
-        button_revert.grid(row=7, column=3, sticky=E, pady=20)
+        button_revert.grid(row=7, column=3, sticky=W, pady=20)
 
         # back button.
         back_button = Button(
@@ -697,9 +691,9 @@ class EditFrame(BaseClass):
 
         # Adjust the sound value
         temp_val = sound_val
-        if is_increase and sound_val < 2.00:
+        if is_increase and sound_val < 5.00:
             temp_val += 0.25
-        elif not is_increase and sound_val > 0.00:
+        elif not is_increase and sound_val > 1.00:
             temp_val -= 0.25
 
         # Update the label text
