@@ -161,7 +161,7 @@ class Backend:
         Inserts another audio file randomly into the modified audio.
 
         Args:
-            audio_file (AudioSegment): Audio segment to insert.
+            audio_file (str): Path to the audio file to insert.
         """
 
         sound = AudioSegment.from_file(audio_file)
@@ -171,9 +171,6 @@ class Backend:
         # Get random time to insert
         random_time = r.randint(0, length)
 
-        # Insert the audio file at the random time
-        tempAudioSegment = self.changedAudioSegment[:random_time]
-        tempAudioSegment.append(sound)
-        tempAudioSegment.append(self.changedAudioSegment[random_time:])
+        # Overlay the audio file at the random time
+        self.changedAudioSegment = self.changedAudioSegment.overlay(sound, position=random_time)
 
-        self.changedAudioSegment = tempAudioSegment

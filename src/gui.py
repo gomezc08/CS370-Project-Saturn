@@ -517,7 +517,7 @@ class EditFrame(BaseClass):
         ).grid(row=4, column=0, padx=50, pady=15, sticky=W)
         Label(
             self,
-            text="Sequential",
+            text="Concatenate",
             fg="Black",
             bg=self.bg_color,
             font=("Courier New", 10),
