@@ -538,7 +538,7 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.adjust_sound_attribute(
+            command=lambda: self.adjust_speed(
                 True, "speed_val", "speed_label"
             ),
         )
@@ -552,7 +552,7 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.adjust_sound_attribute(
+            command=lambda: self.adjust_speed(
                 False, "speed_val", "speed_label"
             ),
         )
@@ -560,7 +560,7 @@ class EditFrame(BaseClass):
         # speed Label.
         self.speed_label.grid(row=1, column=3)
 
-        # pitch up/down buttons.
+        # pitch up button.
         pitch_up_button = Button(
             self,
             text="Up",
@@ -568,11 +568,13 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.adjust_sound_attribute(
+            command=lambda: self.adjust_pitch(
                 True, "pitch_val", "pitch_label"
             ),
         )
         pitch_up_button.grid(row=2, column=1, sticky=W)
+        
+        # pitch down button.
         pitch_down_button = Button(
             self,
             text="Down",
@@ -580,7 +582,7 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.adjust_sound_attribute(
+            command=lambda: self.adjust_pitch(
                 False, "pitch_val", "pitch_label"
             ),
         )
@@ -730,9 +732,9 @@ class EditFrame(BaseClass):
             button["bg"] = self.inactive_color
             state_val = not state_val
 
-    def adjust_sound_attribute(self, is_increase, sound_attribute_val, label_attribute):
-        sound_val = getattr(self, sound_attribute_val)
-        label_val = getattr(self, label_attribute)
+    def adjust_speed(self, is_increase, speed_attribute_val, speed_label_attribute):
+        sound_val = getattr(self, speed_attribute_val)
+        label_val = getattr(self, speed_label_attribute)
 
         # Adjust the sound value
         temp_val = sound_val
@@ -745,7 +747,26 @@ class EditFrame(BaseClass):
         label_val.config(text="{:.2f}".format(temp_val))
 
         # Update the attribute value
-        setattr(self, sound_attribute_val, temp_val)
+        setattr(self, speed_attribute_val, temp_val)
+        
+    
+    def adjust_pitch(self, is_increase, pitch_attribute_val, pitch_label_attribute):
+        sound_val = getattr(self, pitch_attribute_val)
+        label_val = getattr(self, pitch_label_attribute)
+
+        # Adjust the sound value
+        temp_val = sound_val
+        if is_increase and sound_val < 2.00:
+            temp_val += 1
+        elif not is_increase and sound_val > -1.00:
+            temp_val -= 1
+
+        # Update the label text
+        label_val.config(text="{:.2f}".format(temp_val))
+
+        # Update the attribute value
+        setattr(self, pitch_attribute_val, temp_val)
+        
 
     def compile_edited_audio(self):
         # compile.
