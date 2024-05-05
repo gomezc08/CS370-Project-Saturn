@@ -13,6 +13,7 @@ import sys, os
 
 clustered = False
 
+
 class BaseClass(Tk):
     """
     Creates a base frame for all other frames
@@ -39,16 +40,14 @@ class BaseClass(Tk):
         self.bg_color = "#ead6b8"
         self.radio_item = StringVar(value="Small")
         self.sound_item = None
-        
+
         self.db = PlaylistManager()
-        
-        
+
         global clustered
         if clustered == False:
             Backend.auto_cluster_audio_files()
             clustered = True
             clustered = True
-
 
     def change_frame(self, change_frame, sound_argument=None):
         self.destroy()
@@ -57,7 +56,6 @@ class BaseClass(Tk):
         else:
             app = change_frame()
         app.mainloop()
-
 
     def reload_frame(self, change_frame, sound_argument=None, sort=None):
         self.destroy()
@@ -122,7 +120,6 @@ class PlaylistFrame(BaseClass):
         delete_playlist: handles deleting playlist from database.
     """
 
-
     def __init__(self, *args, **kwargs):
         # initialize screen.
         BaseClass.__init__(self, *args, **kwargs)
@@ -154,7 +151,7 @@ class PlaylistFrame(BaseClass):
 
         self.db.connector.init_playlist()
         playlists_list = self.db.view_playlists()
-    
+
         # Radio buttons (for each playlist in rows of 5).
         for idx, playlist in enumerate(playlists_list, start=2):
             r_button = Radiobutton(
@@ -234,17 +231,14 @@ class PlaylistFrame(BaseClass):
         )
         back_button.grid(pady=90, padx=30, row=idx + 2, column=1, sticky=W)
 
-
     def continue_with_selection(self):
         self.playlist_name = self.radio_item.get()
         self.sound_item = self.playlist_name
         self.change_frame(SoundFrame, sound_argument=self.radio_item.get())
 
-
     def create_new_playlist(self):
         self.db.create_playlist(self.playlist_entry.get())
         self.reload_frame(PlaylistFrame)
-
 
     def delete_playlist(self):
         self.db.delete_playlist(self.radio_item.get())
@@ -273,14 +267,27 @@ class SoundFrame(BaseClass):
         self.config(bg=self.bg_color)
         self.sort_name = sort_name
         self.options = self.db.view_sort_playlist("Your Library")
-        
+
         self.sort_dropdown = StringVar(value="Sort by")
-        self.sort_dropdown.trace_add("write", lambda *args: self.reload_frame(SoundFrame, self.playlist_title, self.sort_dropdown.get()))
+        self.sort_dropdown.trace_add(
+            "write",
+            lambda *args: self.reload_frame(
+                SoundFrame, self.playlist_title, self.sort_dropdown.get()
+            ),
+        )
 
         self.add_dropdown = StringVar(value="Add to this Playlist")
-        self.add_dropdown.trace_add("write", lambda *args: self.db.add_sound_into_playlist(self.add_dropdown.get().strip('()\'')[:-2], self.playlist_title))
-        self.add_dropdown.trace_add("write", lambda *args: self.reload_frame(SoundFrame, playlist_title, "Title"))
-        
+        self.add_dropdown.trace_add(
+            "write",
+            lambda *args: self.db.add_sound_into_playlist(
+                self.add_dropdown.get().strip("()'")[:-2], self.playlist_title
+            ),
+        )
+        self.add_dropdown.trace_add(
+            "write",
+            lambda *args: self.reload_frame(SoundFrame, playlist_title, "Title"),
+        )
+
         # layout screen.
         # [Playlist title].
         Label(
@@ -367,9 +374,9 @@ class SoundFrame(BaseClass):
 
         # add sound button (only shows up in non your library playlists).
         if self.playlist_title != "Your Library":
-            # add to playlist option menu.            
+            # add to playlist option menu.
             add_menu = OptionMenu(self, self.add_dropdown, *self.options)
-            add_menu.grid(padx=20, pady=5, row=r+1, column=1)
+            add_menu.grid(padx=20, pady=5, row=r + 1, column=1)
 
         # remove sound from playlist button.
         remove_button = Button(
@@ -386,7 +393,7 @@ class SoundFrame(BaseClass):
         # Sort by dropdown.
         sort_options = ["Title", "Length", "DateCreated"]
         sort_dropdown = OptionMenu(self, self.sort_dropdown, *sort_options)
-        sort_dropdown.grid(row=r+1, column=3)
+        sort_dropdown.grid(row=r + 1, column=3)
 
         # back button.
         back_button = Button(
@@ -394,18 +401,17 @@ class SoundFrame(BaseClass):
         )
         back_button.grid(pady=90, padx=30, row=r + 5, column=0, sticky=W)
 
-
     def continue_with_selection(self):
         self.sound_item = self.radio_item.get()
         self.change_frame(EditFrame, sound_argument=self.radio_item.get())
 
-
     def remove_button(self):
         self.db.remove_sound_from_playlist(self.radio_item.get(), self.playlist_title)
         self.reload_frame(SoundFrame, self.playlist_title)
-    
+
     def stop_playback(self):
         Backend.pause()
+
 
 class EditFrame(BaseClass):
     """
@@ -422,7 +428,7 @@ class EditFrame(BaseClass):
         randinsert_option (str): dropdown for randinsert_value.
         speed_label (label): label showcasing the current speed_val.
         pitch_label (label): label showcasing the current pitch_val.
-        options (list): list of sounds in chosen playlist. 
+        options (list): list of sounds in chosen playlist.
         overlap_value (str): name of sound file user wants to overlap with edited sound.
         concat_value (str): name of sound file user wants to concatenate with edited sound.
         randinsert_value (str): name of sound file user wants to randomly insert with edited sound.
@@ -430,7 +436,7 @@ class EditFrame(BaseClass):
         isOverlap (bool): boolean indicates if the user wants to overlap sound.
         isConcat (bool): boolean indicates if the user wants to concatenate sound.
         isRandomInsert (bool): boolean indicates if the user wants to randomly insert sound.
-        
+
     Methods:
         toggle_btn_click: handles activating and deactivating a button when pressed.
         compile_edited_audio: handles creating new audio file based on user specified edited sound features.
@@ -446,24 +452,24 @@ class EditFrame(BaseClass):
         self.inactive_color = "#FFFACD"
         self.speed_val = 1.00
         self.pitch_val = 1.00
-        
+
         self.overlap_option = StringVar(self)
         self.concat_option = StringVar(self)
         self.randinsert_option = StringVar(self)
-        
+
         self.speed_label = Label(self, text=self.speed_val)
         self.pitch_label = Label(self, text=self.pitch_val)
-        
+
         self.options = self.db.view_sort_playlist("Your Library")
-        
+
         self.overlap_value = None
         self.concat_value = None
         self.randinsert_value = None
-        
+
         self.overlap_option.set("Select")
         self.concat_option.set("Select")
         self.randinsert_option.set("Select")
-        
+
         self.isReversed = False
         self.isOverlap = False
         self.isConcat = False
@@ -587,10 +593,16 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.toggle_btn_click(overlap_button, "isOverlap", self.overlap_option.get(), "overlap_option", "overlap_value"),
+            command=lambda: self.toggle_btn_click(
+                overlap_button,
+                "isOverlap",
+                self.overlap_option.get(),
+                "overlap_option",
+                "overlap_value",
+            ),
         )
         overlap_button.grid(row=4, column=1, sticky=W)
-        
+
         overlap_menu = OptionMenu(self, self.overlap_option, *self.options)
         overlap_menu.grid(row=4, column=2)
 
@@ -602,10 +614,16 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.toggle_btn_click(seq_button, "isConcat", self.concat_option.get(), "concat_option", "concat_value"),
+            command=lambda: self.toggle_btn_click(
+                seq_button,
+                "isConcat",
+                self.concat_option.get(),
+                "concat_option",
+                "concat_value",
+            ),
         )
         seq_button.grid(row=5, column=1, sticky=W)
-        
+
         seq_menu = OptionMenu(self, self.concat_option, *self.options)
         seq_menu.grid(row=5, column=2)
 
@@ -617,11 +635,17 @@ class EditFrame(BaseClass):
             bg=self.inactive_color,
             padx=10,
             pady=5,
-            command=lambda: self.toggle_btn_click(rand_button, "isRandomInsert", self.randinsert_option.get(), "randinsert_option", "randinsert_value"),
+            command=lambda: self.toggle_btn_click(
+                rand_button,
+                "isRandomInsert",
+                self.randinsert_option.get(),
+                "randinsert_option",
+                "randinsert_value",
+            ),
         )
 
         rand_button.grid(row=6, column=1, sticky=W)
-        
+
         rand_menu = OptionMenu(self, self.randinsert_option, *self.options)
         rand_menu.grid(row=6, column=2)
 
@@ -647,8 +671,8 @@ class EditFrame(BaseClass):
             pady=5,
             command=self.save_edited_audio,
         )
-        button_save.grid(row = 7, column=2, sticky=W, pady=20)
-        
+        button_save.grid(row=7, column=2, sticky=W, pady=20)
+
         # need to not be so close to save button.
         button_revert = Button(
             self,
@@ -657,7 +681,7 @@ class EditFrame(BaseClass):
             bg=self.default_button_color,
             padx=30,
             pady=5,
-            command=lambda: self.reload_frame()
+            command=lambda: self.reload_frame(),
         )
         button_revert.grid(row=7, column=3, sticky=W, pady=20)
 
@@ -672,7 +696,9 @@ class EditFrame(BaseClass):
         app = EditFrame(self.sound_title)
         app.mainloop()
 
-    def toggle_btn_click(self, button, state, value=None, value_attribute=None, val = None):
+    def toggle_btn_click(
+        self, button, state, value=None, value_attribute=None, val=None
+    ):
         if value is not None:
             value = value.strip("(')")
             value = value[:-2]
@@ -683,12 +709,11 @@ class EditFrame(BaseClass):
             setattr(self, state, state_val)
             if value is not None:
                 setattr(self, val, value)
-            
+
         else:
             button["bg"] = self.inactive_color
             state_val = not state_val
-        
-        
+
     def adjust_sound_attribute(self, is_increase, sound_attribute_val, label_attribute):
         sound_val = getattr(self, sound_attribute_val)
         label_val = getattr(self, label_attribute)
@@ -705,7 +730,6 @@ class EditFrame(BaseClass):
 
         # Update the attribute value
         setattr(self, sound_attribute_val, temp_val)
-
 
     def compile_edited_audio(self):
         back = Backend.getInstance()
@@ -724,7 +748,6 @@ class EditFrame(BaseClass):
             back.randomInsert("sounds/" + self.randinsert_value + ".mp3")
         back.play_modified_audio()
 
-
     def save_edited_audio(self):
         back = Backend.getInstance()
         back.load_audio("sounds/" + self.sound_title + ".mp3")
@@ -741,6 +764,8 @@ class EditFrame(BaseClass):
         if self.isRandomInsert:
             back.randomInsert("sounds/" + self.randinsert_value + ".mp3")
         back.save("sounds/" + self.sound_title + "_modified.mp3")
+
+
 if __name__ == "__main__":
     app = HomeFrame()
     app.mainloop()

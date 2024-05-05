@@ -107,7 +107,9 @@ class DBConnector:
                 else:
                     try:
                         # Get the length of the .wav file
-                        duration = pydub.AudioSegment.from_file(file_path).duration_seconds
+                        duration = pydub.AudioSegment.from_file(
+                            file_path
+                        ).duration_seconds
                     except Exception as e:
                         print(f"Error processing {filename}: {e}")
                         continue

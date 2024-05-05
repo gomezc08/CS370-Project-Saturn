@@ -18,7 +18,6 @@ class Backend:
         reversed (bool): Flag indicating if the audio is reversed.
     """
 
-
     def __init__(self):
         """
         Initializes the Backend with the given audio file.
@@ -153,7 +152,9 @@ class Backend:
         """
         # This should work, adapted straight from saturn
         sound = AudioSegment.from_file(audio_file)
-        self.changedAudioSegment = self.changedAudioSegment.append(sound, crossfade=crossfade_value)
+        self.changedAudioSegment = self.changedAudioSegment.append(
+            sound, crossfade=crossfade_value
+        )
 
     def randomInsert(self, audio_file):
         """
@@ -162,9 +163,9 @@ class Backend:
         Args:
             audio_file (AudioSegment): Audio segment to insert.
         """
-        
+
         sound = AudioSegment.from_file(audio_file)
-        
+
         length = len(self.changedAudioSegment)
 
         # Get random time to insert
