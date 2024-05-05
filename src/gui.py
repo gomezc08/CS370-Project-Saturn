@@ -8,6 +8,7 @@ from database.PlaylistManager import PlaylistManager
 from src.gui_backend import Backend
 
 from tkinter import *
+from tkinter import simpledialog
 from PIL import Image, ImageTk
 import sys, os
 
@@ -745,6 +746,7 @@ class EditFrame(BaseClass):
         setattr(self, sound_attribute_val, temp_val)
 
     def compile_edited_audio(self):
+        # compile.
         back = Backend.getInstance()
         back.load_audio("sounds/" + self.sound_title + ".mp3")
         if self.speed_val != 1.00:
@@ -759,9 +761,12 @@ class EditFrame(BaseClass):
             back.concatenate("sounds/" + self.concat_value + ".mp3")
         if self.isRandomInsert:
             back.randomInsert("sounds/" + self.randinsert_value + ".mp3")
+        
+        # playback.
         back.play_modified_audio()
 
     def save_edited_audio(self):
+        # compile
         back = Backend.getInstance()
         back.load_audio("sounds/" + self.sound_title + ".mp3")
         if self.speed_val != 1.00:
@@ -776,7 +781,11 @@ class EditFrame(BaseClass):
             back.concatenate("sounds/" + self.concat_value + ".mp3")
         if self.isRandomInsert:
             back.randomInsert("sounds/" + self.randinsert_value + ".mp3")
-        back.save("sounds/" + self.sound_title + "_modified.mp3")
+        
+        # Save.
+        edited_title = simpledialog.askstring("Title", "Enter name of new sound")
+        back.save("sounds/" + edited_title + ".mp3")
+        self.change_frame(PlaylistFrame)
 
 
 if __name__ == "__main__":
