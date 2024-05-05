@@ -112,7 +112,7 @@ class PlaylistManager:
             self.connector.cnx.commit()
 
         except Exception as e:
-            print(f"Error adding playlist: {e}")
+            print(e)
 
         finally:
             self.connector.close_connection()
@@ -176,7 +176,7 @@ class PlaylistManager:
             # print(f"this is the result! {result}")
             self.connector.cnx.commit()
         except Exception as e:
-            print(f"Error adding sound to playlist: {e}")
+            print(e)
         finally:
             self.connector.close_connection()
             

@@ -82,8 +82,8 @@ class DBConnector:
             self.cnx.commit()
             print(f"Playlist '{playlist_name}' added successfully!")
             
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
+        except mysql.connector.Error as e:
+            print(e)
 
         for filename in os.listdir(self.sound_dir):
             if filename.endswith(".mp3"):
@@ -160,7 +160,6 @@ class DBConnector:
 
             # Check if each title in the database exists in the sound directory
             for title in existing_titles:
-                print(f"title: {title}")
                 if title + ".mp3" not in os.listdir(self.sound_dir):
                     # If not found in the directory, delete from soundplaylistsinfo first
                     delete_query_soundplaylistsinfo = "DELETE FROM soundplaylistsinfo WHERE SoundTitle = %s"
