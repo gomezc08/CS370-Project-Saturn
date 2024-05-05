@@ -30,6 +30,7 @@ class PlaylistManager:
         # composition relationship.
         self.connector = DBConnector("sounds")
         self.sort_type = {"Title", "Length", "DateCreated"}
+        
 
     def view_sort_playlist(self, playlist_title, sort_name=None):
         # Verify playlist is valid.
@@ -77,6 +78,7 @@ class PlaylistManager:
             self.connector.close_connection()
 
         return playlist_list
+    
 
     def view_playlists(self):
         playlists = []
@@ -96,6 +98,7 @@ class PlaylistManager:
             self.connector.close_connection()
 
         return playlists
+    
 
     def create_playlist(self, playlist_name):
         # if playlist_name not in self.playlist_list:
@@ -113,6 +116,7 @@ class PlaylistManager:
 
         finally:
             self.connector.close_connection()
+            
 
     def delete_playlist(self, playlist_name):
         # delete from playlistsname.
@@ -142,6 +146,7 @@ class PlaylistManager:
 
         finally:
             self.connector.close_connection()
+            
 
     def play_sound_in_playlist(self, sound_title, sound_playlist):
         # verify sound_title and sound_playlist valid.
@@ -155,6 +160,7 @@ class PlaylistManager:
         # play the sound.
         parser = CommandLineParser(sys.argv)
         parser.play(parent_dir + "/sounds/" + sound_title + ".wav")
+        
 
     def add_sound_into_playlist(self, sound_title, sound_playlist):
         # insert it.
@@ -167,12 +173,13 @@ class PlaylistManager:
             self.connector.open_connection()
             self.connector.cursor.execute(query, values)
             result = self.connector.cursor.fetchone()
-            print(f"this is the result! {result}")
+            # print(f"this is the result! {result}")
             self.connector.cnx.commit()
         except Exception as e:
             print(f"Error adding sound to playlist: {e}")
         finally:
             self.connector.close_connection()
+            
 
     def remove_sound_from_playlist(self, sound_title, sound_playlist):
         self.connector.open_connection()

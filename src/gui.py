@@ -155,7 +155,9 @@ class PlaylistFrame(BaseClass):
             bg=self.bg_color,
         ).grid(sticky=W, pady=10, padx=30, row=1, column=1)
 
+        # set-up database.
         self.db.connector.init_playlist()
+        self.db.connector.cleanup_database()
         playlists_list = self.db.view_playlists()
 
         # Radio buttons (for each playlist in rows of 5).
