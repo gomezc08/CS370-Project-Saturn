@@ -657,7 +657,7 @@ class EditFrame(BaseClass):
             bg=self.default_button_color,
             padx=30,
             pady=5,
-            command=lambda: EditFrame.reload_frame(self, EditFrame, sound_title)
+            command=lambda: self.reload_frame()
         )
         button_revert.grid(row=7, column=3, sticky=W, pady=20)
 
@@ -667,6 +667,10 @@ class EditFrame(BaseClass):
         )
         back_button.grid(pady=90, padx=30, row=8, column=0, sticky=W)
 
+    def reload_frame(self):
+        self.destroy()
+        app = EditFrame(self.sound_title)
+        app.mainloop()
 
     def toggle_btn_click(self, button, state, value=None, value_attribute=None, val = None):
         if value is not None:
