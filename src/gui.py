@@ -655,6 +655,17 @@ class EditFrame(BaseClass):
             command=self.save_edited_audio,
         )
         button_save.grid(row=7, column=2, sticky=E, pady=20)
+        
+        button_revert = Button(
+            self,
+            text="Revert",
+            fg="White",
+            bg=self.default_button_color,
+            padx=30,
+            pady=5,
+            command=lambda: self.reload_frame(EditFrame, self.sound_title),
+        )
+        button_revert.grid(row=7, column=3, sticky=E, pady=20)
 
         # back button.
         back_button = Button(

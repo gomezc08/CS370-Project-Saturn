@@ -18,7 +18,6 @@ class Backend:
         reversed (bool): Flag indicating if the audio is reversed.
     """
 
-    paused = False
 
     def __init__(self):
         """
@@ -28,7 +27,6 @@ class Backend:
             audio_file (str): Path to the audio file.
         """
 
-        self.reversed = False
         self.audioSegment = None
         self.changedAudioSegment = None
 
@@ -83,7 +81,6 @@ class Backend:
         """
         Pauses the audio playback.
         """
-        Backend.paused = True
         p.stop()
 
     def modify_speed(self, change_amnt):
@@ -115,11 +112,6 @@ class Backend:
         """
         Toggles the reversed attribute and reverses the audio segment.
         """
-        if self.reversed == False:
-            self.reversed = True
-        if self.reversed == True:
-            self.reversed = False
-
         self.changedAudioSegment = self.changedAudioSegment.reverse()
 
     def revert(self):
@@ -127,20 +119,16 @@ class Backend:
         Reverts the audio to its original state.
         """
         self.changedAudioSegment = self.audioSegment
-        if self.reversed == True:
-            self.reversed = False
 
     def play_modified_audio(self):
         """
         Plays the modified audio.
         """
-        while not Backend.paused:
-            p.play(self.changedAudioSegment)
+        p.play(self.changedAudioSegment)
 
     def play_audio_file(audio_file):
         sound = AudioSegment.from_file(audio_file, format=audio_file.split(".")[-1])
-        while not Backend.paused:
-            p.play(sound)
+        p.play(sound)
 
     def save(self, name):
         """
@@ -159,7 +147,7 @@ class Backend:
             audio_file (AudioSegment): Audio segment to overlap with.
         """
         sound = AudioSegment.from_file(audio_file)
-        self.changedAudioSegment.overlay(sound)
+        self.changedAudioSegment = self.changedAudioSegment.overlay(sound)
 
     def concatenate(self, audio_file, crossfade_value=0):
         """
@@ -171,7 +159,7 @@ class Backend:
         """
         # This should work, adapted straight from saturn
         sound = AudioSegment.from_file(audio_file)
-        self.changedAudioSegment.append(sound, crossfade=crossfade_value)
+        self.changedAudioSegment = self.changedAudioSegment.append(sound, crossfade=crossfade_value)
 
     def randomInsert(self, audio_file):
         """
