@@ -90,7 +90,7 @@ class Backend:
             )
         elif change_amnt < 1:
             self.changedAudioSegment = ae.speed_down(
-                self.changedAudioSegment, change_amnt
+                self.changedAudioSegment, change_amnt + 0.1
             )
        
 
