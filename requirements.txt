@@ -9,4 +9,5 @@ mysql # for database stuff
 pandas # for the help function
 librosa
 kneed
+audio_effects
 git+https://github.com/cexen/py-simple-audio.git # segmentation fault handler
