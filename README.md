@@ -104,9 +104,9 @@ Our goal is to extend our sound features from command line to something the gui 
     - Implemented PlaylistManager.py
     - Implemented SQL.sql
     - Implemented gui.py
+    - Contributed to gui_backend.py
     - Contributed to use_cases
     - Contributed to story maps
-    - Contributed to gui_backend.py
 
 **INDIVIDUAL REFLECTIONS:**
 
