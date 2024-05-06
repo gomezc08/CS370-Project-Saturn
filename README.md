@@ -12,13 +12,12 @@
 
 - [x] tests!!!!
 - [x] comments (new and update big block comment under class name)
-- [ ] update documetation.md with new functions
+- [x] update documetation.md with new functions
 - [x] gui backend object
 - [x] convert to mp3
 - [x] saving and playing in the edit frame
 - [x] testing clustering with larger sound files.
-- [ ] Fix deleting playlists
-- [ ] Autodelete songs on startup?
+- [x] Fix deleting playlists
 
 LIMITATIONS:
 - Files with long titles are incompatible with the db stuff
@@ -85,10 +84,22 @@ Our goal is to fully implement the gui and bridge our backend and databases usin
 - [x] Save feature to save an edited sound.
 
 part b: machine learning with clustering.
+Our goal is to be able to cluster similar sounds (our way to group by generes).
+- [x] Create clustering algorithm.
+- [x] Embed clustering algorithm in gui to create playlists for each cluster.
+- [x] Test implementation on real sounds in gui.
+
 
 part c: setting up a backend.
-Our goal is to extend our sound features from command line to something the gui can utilize.
-- [x]
+Our goal is to extend our sound features from command line to something the gui can utilize (acting as our controller).
+- [x] Modify speed.
+- [x] Modify pitch.
+- [x] Indicate if user wants to reverse a sounds or not.
+- [x] Allow user to add another sound to edited sound.
+- [x] Allow user to specify a sound to randomly insert in edited sound.
+- [x] Give user the choice whether to play edited version or original.
+- [x] Set up clustering algorithm.
+
 
 **GROUP MEMBERS:**
 

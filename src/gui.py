@@ -714,13 +714,15 @@ class EditFrame(BaseClass):
         app = EditFrame(self.sound_title)
         app.mainloop()
 
-    def toggle_btn_click(
-        self, button, state, value=None, value_attribute=None, val=None
-    ):
+    def toggle_btn_click(self, button, state, value=None, value_attribute=None, val=None):
+        # grab sound user clicked on.
         if value is not None:
             value = value.strip("(')")
             value = value[:-2]
+        
         state_val = getattr(self, state)
+        
+        # begin flipping.
         if button["bg"] == self.inactive_color:
             button["bg"] = self.active_color
             state_val = not state_val
@@ -731,6 +733,7 @@ class EditFrame(BaseClass):
         else:
             button["bg"] = self.inactive_color
             state_val = not state_val
+            setattr(self, state, state_val)
 
     def adjust_speed(self, is_increase, speed_attribute_val, speed_label_attribute):
         sound_val = getattr(self, speed_attribute_val)
