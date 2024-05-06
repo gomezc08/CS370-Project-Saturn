@@ -95,19 +95,14 @@ class Backend:
         Args:
             change_amnt (float): Amount of pitch change.
         """
-        # Adjust the frame rate to modify pitch
-        new_frame_rate = int(self.changedAudioSegment.frame_rate * change_amnt)
+        change_amnt -= 1
         
-        # Ensure the new frame rate is within valid boundaries
-        if new_frame_rate > 0:
-            self.changedAudioSegment = self.changedAudioSegment._spawn(
-                self.changedAudioSegment.raw_data,
-                overrides={
-                    "frame_rate": new_frame_rate
-                }
-            )
-        else:
-            print("Error: Invalid frame rate.")
+        # Adjust the frame rate to modify pitch
+        new_frame_rate = int(self.changedAudioSegment.frame_rate * (2.0 ** change_amnt))
+        
+        lowpitch_sound = self.changedAudioSegment._spawn(self.changedAudioSegment.raw_data, overrides={'frame_rate': new_frame_rate})
+        new_sample_rate = 44100  # Default to a common sample rate if not supported
+        self.changedAudioSegment = lowpitch_sound.set_frame_rate(new_sample_rate)
 
 
     def reverse(self):

@@ -740,7 +740,7 @@ class EditFrame(BaseClass):
         temp_val = sound_val
         if is_increase and sound_val < 5.00:
             temp_val += 0.25
-        elif not is_increase and sound_val > 1.00:
+        elif not is_increase and sound_val > 0.00:
             temp_val -= 0.25
 
         # Update the label text
@@ -757,9 +757,9 @@ class EditFrame(BaseClass):
         # Adjust the sound value
         temp_val = sound_val
         if is_increase and sound_val < 2.00:
-            temp_val += 1
-        elif not is_increase and sound_val > -1.00:
-            temp_val -= 1
+            temp_val += 0.25
+        elif not is_increase and sound_val > 0:
+            temp_val -= 0.25
 
         # Update the label text
         label_val.config(text="{:.2f}".format(temp_val))
