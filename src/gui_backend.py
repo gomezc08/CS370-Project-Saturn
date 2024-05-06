@@ -35,6 +35,8 @@ class Backend:
         if an instance of already exists, return it
         otherwise, create a new instance
         """
+        # this is useless, since apparently the only way to have a singleton in python
+        # is to import it as a module
         if not hasattr(Backend, "_instance"):
             Backend._instance = Backend()
         return Backend._instance
@@ -44,7 +46,6 @@ class Backend:
         Automatically clusters audio files and creates playlists based on the clusters.
         Deletes any existing playlists with 'cluster' in the name.
         """
-        # TODO: uncomment this when AudioClustering is fixed
         clustering = AudioClustering()
         playlistManager = PlaylistManager()
 

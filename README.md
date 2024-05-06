@@ -118,7 +118,16 @@ Our goal is to extend our sound features from command line to something the gui 
     - Contributed to gui_backend.py
     - Contributed to use_cases
     - Contributed to story maps
+- Neel Troeger:
+    - Implemented gui_backend.py
+    - Implemented ml.py
+    - Contributed to gui.py
+    - Contributed to use cases and story maps
+    - Implemented cli
+    - Wrote tests for cli
 
 **INDIVIDUAL REFLECTIONS:**
 
-- [x] Chris Gomez: The gui was the biggest learning curve I had to spend a whole saturday flipping through yt tutorials and when it came to integrating, I had to redo my gui a few times to make it more elegant and fit some sort of software design rather than having a bunch of random functions. Another big challenge was the embedded sql aspect using python since we had just learnt it this last semester in databases. I wish we had came up with like a pause/play button. I also would have loved to have some sort of media sounds storage system so we weren't reliant on a directory. I also would love to make the gui visually more organized because I feel it is a little messy. 
+- [x] Chris Gomez: The gui was the biggest learning curve I had to spend a whole saturday flipping through yt tutorials and when it came to integrating, I had to redo my gui a few times to make it more elegant and fit some sort of software design rather than having a bunch of random functions. Another big challenge was the embedded sql aspect using python since we had just learnt it this last semester in databases. I wish we had came up with like a pause/play button. I also would have loved to have some sort of media sounds storage system so we weren't reliant on a directory. I also would love to make the gui visually more organized because I feel it is a little messy.
+
+- Neel Troeger: Because of how the cli was setup (for single use cases), I had to create a new backend for the gui. This was more of a challenge than I thought, since I wasn't working directly on implementing the gui, and what I originally had in my head was likely not what Chris had in his head. This led to a lot of back and forth between us to make sure the gui and backend were in sync. In addition, since the backend is set-up to load a single audio file and change only that, implementing it was a bit more difficult than reusing code from the cli. Implementing the clustering was less difficult, since I am taking a machine learning class this semester. I used DBSCAN (Density-Based Spatial Clustering of Applications with Noise) to cluster the sounds, mostly because that way I didn't have to pre-specify a target number of clusters, which would aid in scalability in future usage. I still had to figure out how to extract features from the sound files, which was a bit of a challenge, but was resolved by using the librosa library.
