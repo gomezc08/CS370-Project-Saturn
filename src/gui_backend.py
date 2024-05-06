@@ -2,6 +2,7 @@ import sys
 import pydub.playback as p
 from pydub import AudioSegment
 import random as r
+import audio_effects as ae
 
 sys.path.append("src")
 from ml import AudioClustering
@@ -83,10 +84,15 @@ class Backend:
         Args:
             change_amnt (float): Amount of speed change.
         """
-        # This should work ?
-        self.changedAudioSegment = self.changedAudioSegment.speedup(
-            playback_speed=change_amnt
-        )
+        if change_amnt > 1:
+            self.changedAudioSegment = self.changedAudioSegment.speedup(
+                playback_speed=change_amnt
+            )
+        elif change_amnt < 1:
+            self.changedAudioSegment = ae.speed_down(
+                self.changedAudioSegment, change_amnt
+            )
+       
 
     def modify_pitch(self, change_amnt):
         """
