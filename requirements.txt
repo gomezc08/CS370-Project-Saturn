@@ -7,3 +7,7 @@ ffmpeg-python # for playing other audio files on windows (potentially)
 pydub # for playing other audio files on windows (potentially)
 mysql # for database stuff
 pandas # for the help function
+librosa
+kneed
+audio_effects
+git+https://github.com/cexen/py-simple-audio.git # segmentation fault handler

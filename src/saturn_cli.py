@@ -1,11 +1,9 @@
 import sys
 import os
 import threading
-import simpleaudio as sa
 from pydub import AudioSegment
 from pydub.effects import speedup
 import pydub.playback as playback
-import pydub.effects as effects
 import librosa
 import soundfile as sf
 import pandas as pd
@@ -400,13 +398,10 @@ class Saturn:
             )
             sys.exit(1)
 
-    def change_pitch_command(self):
+    def change_pitch_command(self, file_path, semitones):
         # Change the pitch of an audio file
-        if self.argvlen > 3:
-            file_path = self.argv[2]
-            semitones = float(
-                self.argv[3]
-            )  # The number of semitones to shift the pitch
+        if file_path and semitones is not None:
+            semitones = float(semitones)  # The number of semitones to shift the pitch
             if file_path[0] == ".":
                 file_path = str(os.getcwd()) + file_path[1:]
             print(

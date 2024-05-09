@@ -1,7 +1,7 @@
-import wave
 import os
 from datetime import datetime
 import mysql.connector
+import pydub
 
 
 class DBConnector:
@@ -14,9 +14,10 @@ class DBConnector:
 
     Methods:
         create_database_connection: Establishes a secure connection to the MySQL Workbench.
-        open_connection: Opens the connection to Saturn's SQL database.
-        close_connection: Closes the connection to Saturn's SQL database.
+        open_connection: opens the connection to Saturn's SQL database.
+        close_connection: closes the connection to Saturn's SQL database.
         init_playlist: Initializes tables found in our database.
+        cleanup_database: updates database and removes sounds that aren't in the sounds directory.
     """
 
     def __init__(self, sound_dir):
@@ -26,14 +27,15 @@ class DBConnector:
         self.cursor = None
         # self.connect_to_my_sql()
 
+
     def open_connection(self):
         print("<<Opening>> connection to MySQL")
         config = {
-            "user": "root",
-            "password": "!WhitmanMemo08?",
-            "host": "127.0.0.1",
-            "port": 3307,
-            "database": "soundarchive",
+            "user": "AidanVB",
+            "password": "2ibtxFzCi95AqWFpZb6O",
+            "host": "database-test1.cb6ak8csmzrs.us-west-2.rds.amazonaws.com",
+            "port": 3306,
+            "database": "saturnDB",
             "raise_on_warnings": True,
         }
 
@@ -41,6 +43,7 @@ class DBConnector:
             self.cnx = mysql.connector.connect(**config)
             self.cursor = self.cnx.cursor()
             print("Connected to MySQL")
+            
         except mysql.connector.Error as err:
             if err.errno == mysql.connector.errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -49,10 +52,12 @@ class DBConnector:
             else:
                 print("Could not connect to MySQL:", err)
 
+
     def close_connection(self):
         print("<<Closing>> connection to MySQL\n\n\n\n")
         self.cnx.close()
         self.cursor.close()
+
 
     def init_playlist(self):
         # OPEN CONNECTION
@@ -76,11 +81,12 @@ class DBConnector:
             self.cursor.execute(insert_query_playlistnames, (playlist_name,))
             self.cnx.commit()
             print(f"Playlist '{playlist_name}' added successfully!")
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
+            
+        except mysql.connector.Error as e:
+            print(e)
 
         for filename in os.listdir(self.sound_dir):
-            if filename.endswith(".wav"):
+            if filename.endswith(".mp3"):
                 file_path = os.path.join(self.sound_dir, filename)
                 # Get the title.
                 title = os.path.splitext(filename)[0]
@@ -103,16 +109,16 @@ class DBConnector:
                     self.sound_list.append(title)
 
                 if result_soundlist[0] > 0:
-                    print(f"{title} already exists in the soundlist database.")
+                    #print(f"{title} already exists in the soundlist database.")
+                    continue
                 else:
                     try:
                         # Get the length of the .wav file
-                        with wave.open(file_path, "r") as wav_file:
-                            frames = wav_file.getnframes()
-                            rate = wav_file.getframerate()
-                            duration = frames / float(rate)  # Duration in seconds
+                        duration = pydub.AudioSegment.from_file(
+                            file_path
+                        ).duration_seconds
                     except Exception as e:
-                        print(f"Error processing {filename}: {e}")
+                        #print(f"Error processing {filename}: {e}")
                         continue
 
                     # Get the current date and time
@@ -125,7 +131,8 @@ class DBConnector:
                     self.cnx.commit()
 
                 if result_soundplaylistsinfo[0] > 0:
-                    print(f"{title} already exists in the soundplaylistsinfo database.")
+                    #print(f"{title} already exists in the soundplaylistsinfo database.")
+                    continue
                 else:
                     soundplaylistsinfo_data = (title, "Your Library")
 
@@ -139,3 +146,33 @@ class DBConnector:
 
         # CLOSE CONNECTION.
         self.close_connection()
+
+
+    def cleanup_database(self):
+        # OPEN CONNECTION
+        self.open_connection()
+        
+        try:
+            # Fetch existing titles from soundlist table
+            query = "SELECT Title FROM soundlist"
+            self.cursor.execute(query)
+            existing_titles = [row[0] for row in self.cursor.fetchall()]
+
+            # Check if each title in the database exists in the sound directory
+            for title in existing_titles:
+                if title + ".mp3" not in os.listdir(self.sound_dir):
+                    # If not found in the directory, delete from soundplaylistsinfo first
+                    delete_query_soundplaylistsinfo = "DELETE FROM soundplaylistsinfo WHERE SoundTitle = %s"
+                    self.cursor.execute(delete_query_soundplaylistsinfo, (title,))
+                    
+                    # Then delete from soundlist
+                    delete_query_soundlist = "DELETE FROM soundlist WHERE Title = %s"
+                    self.cursor.execute(delete_query_soundlist, (title,))
+
+            self.cnx.commit()
+            print("Database cleanup complete.")
+        except Exception as e:
+            print(f"Error cleaning up: {e}")
+        finally:
+            # CLOSE CONNECTION
+            self.close_connection()
